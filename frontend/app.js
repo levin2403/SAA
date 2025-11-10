@@ -17,7 +17,7 @@
     { id: 3, name: 'Estadística', code: 'MAT-310', students: 25, schedule: 'Lun-Mié 14:00-16:00', color: '', studentsList: ['Sofía Castro','Miguel Peña','Carla Ríos'] },
   ]
 
-  // Elements
+  // Elementos
   const loginScreen = document.getElementById('loginScreen')
   const loginForm = document.getElementById('loginForm')
   const loginId = document.getElementById('loginId')
@@ -51,7 +51,7 @@
   function mountDashboard(){
     // esconder login
     loginScreen.style.display = 'none'
-    // mostrar elementos de la app (sidebar is already in DOM)
+    // mostrar elementos de la app 
     document.body.classList.add('logged')
     // actualizar profile info
     const avatar = document.querySelector('.profile-card .avatar')
@@ -61,7 +61,7 @@
     if(profileName) profileName.textContent = currentUser.name
     if(profileRole) profileRole.textContent = currentUser.type === 'student' ? 'Estudiante' : 'Profesor'
 
-    // render classes
+  // renderizar clases
     const grid = document.querySelector('.grid.grid-cols-1') || document.querySelector('.cards')
   const container = document.createElement('div')
   container.className = 'dynamic-cards'
@@ -82,7 +82,7 @@
           <button class="action-btn">${currentUser.type === 'student' ? 'Ver Código QR' : 'Tomar Lista'}</button>
         </div>
       `
-      // button handler
+  // manejador del botón
       card.querySelector('.action-btn').addEventListener('click', function(){
         if(currentUser.type === 'student'){
           openQr(c)
@@ -93,31 +93,31 @@
       container.appendChild(card)
     })
 
-    // replace existing cards section if present
+  // reemplazar la sección de tarjetas existente si está presente
     const cardsSection = document.querySelector('section.cards')
     if(cardsSection && cardsSection.parentNode){
       cardsSection.parentNode.replaceChild(container, cardsSection)
     } else {
-      // append to main
+      // anexar al elemento main
       const main = document.querySelector('main.main')
       if(main) main.appendChild(container)
     }
 
-    // show/hide teacher specific nav
+  // mostrar/ocultar navegación específica para profesores
     const teacherButtons = Array.from(document.querySelectorAll('.sidebar .teacher-only'))
     teacherButtons.forEach(btn => btn.style.display = currentUser.type === 'teacher' ? 'block' : 'none')
 
-  // attach nav handlers
+  // asignar manejadores a la navegación
   const navToma = document.getElementById('nav-toma')
   const navReportes = document.getElementById('nav-reportes')
   if(navToma) navToma.onclick = () => showAttendancePage()
   if(navReportes) navReportes.onclick = () => showReportsPage()
 
-    // show sidebar/profile etc
-    document.getElementById('sidebar').style.display = 'block'
+  // mostrar barra lateral / perfil, etc
+  document.getElementById('sidebar').style.display = 'block'
   }
 
-  // Attendance and Reports (static app)
+  // Asistencia y reportes (aplicación estática)
   function getStoredRecords(){
     try{ return JSON.parse(localStorage.getItem('attendanceRecords')||'[]') }catch(e){return[]}
   }
@@ -129,12 +129,12 @@
   function showAttendancePage(initialClass){
     const main = document.querySelector('main.main')
     if(!main) return
-    // create container
+  // crear contenedor
     const container = document.createElement('div')
     container.className = 'attendance-page'
     const classes = teacherClasses
     const sel = initialClass || classes[0]
-    // select options
+  // opciones del select
     const selectHtml = `<select id="attendance-class-select">${classes.map(c=>`<option value="${c.id}">${c.name} — ${c.code}</option>`).join('')}</select>`
     container.innerHTML = `
       <div class="flex" style="justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -144,7 +144,7 @@
       <div id="attendance-students" class="bg-white p-4 rounded-xl shadow"></div>
       <div style="margin-top:12px"><button id="saveAttendance" class="btn">Guardar asistencia</button> <button id="backDashboard" class="btn outline">Volver</button></div>
     `
-    // replace existing dynamic cards or append
+  // reemplazar tarjetas dinámicas existentes o anexar
     const existing = document.querySelector('.dynamic-cards')
     if(existing && existing.parentNode) existing.parentNode.replaceChild(container, existing)
     else main.appendChild(container)
@@ -219,7 +219,7 @@
     setTimeout(()=> n.style.display = 'none', 3000)
   }
 
-  // logout (button exists in sidebar)
+  // cerrar sesión (el botón existe en la barra lateral)
   const logoutBtn = document.querySelector('.sidebar button[aria-label="logout"]')
   if(logoutBtn){
     logoutBtn.addEventListener('click', function(){
@@ -227,6 +227,6 @@
     })
   }
 
-  // init: hide sidebar on load
+  // inicializar: ocultar la barra lateral al cargar
   document.getElementById('sidebar').style.display = 'none'
 })()
