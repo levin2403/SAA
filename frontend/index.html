@@ -10,117 +10,19 @@
 <body>
   <div class="app" id="appRoot">
     <!-- Login screen (se muestra inicialmente) -->
-    <div id="loginScreen" class="login-screen">
-      <div class="login-card">
-        <div class="logo">
-          <div class="logo-icon">GT</div>
-          <h1>AttendanceHub</h1>
+    <!doctype html>
+    <html lang="es">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Index eliminado — Usa login.html</title>
+        <meta http-equiv="refresh" content="0; url=login.html">
+        <style>body{font-family:Nunito,system-ui;display:flex;align-items:center;justify-content:center;height:100vh;background:#f3f6fb;color:#111827} .box{background:#fff;padding:24px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.06);text-align:center}</style>
+      </head>
+      <body>
+        <div class="box">
+          <h2>Archivo obsoleto</h2>
+          <p>La versión SPA `index.html` fue deshabilitada. Serás redirigido a <a href="login.html">login.html</a>.</p>
         </div>
-        <p class="muted">Sistema de Control de Asistencias - Prototipo</p>
-        <form id="loginForm">
-          <label>ID de Usuario</label>
-          <input id="loginId" maxlength="10" placeholder="1234567890" />
-          <label>Contraseña</label>
-          <input id="loginPass" type="password" placeholder="tu contraseña" />
-          <div id="loginError" class="login-error" aria-live="polite"></div>
-          <button type="submit" class="btn">Iniciar Sesión</button>
-        </form>
-        <div class="demo-credentials">
-          <strong>Demo:</strong> Alumno 1234567890 / alumno123 · Maestro 0987654321 / maestro123
-        </div>
-      </div>
-    </div>
-
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">Gestor</div>
-      <nav>
-        <a class="nav-item active">Dashboard</a>
-        <a class="nav-item">Classroom</a>
-        <a class="nav-item">Live Lessons</a>
-        <a class="nav-item">Recorded</a>
-        <a class="nav-item">Video Library</a>
-        <!-- Teacher-only navigation -->
-        <button id="nav-toma" class="nav-item teacher-only" style="display:none">Toma de Lista</button>
-        <button id="nav-reportes" class="nav-item teacher-only" style="display:none">Reportes</button>
-      </nav>
-  <button aria-label="logout" class="nav-item" style="margin-top:12px;background:transparent;border:0;color:#ef4444;cursor:pointer">Cerrar Sesión</button>
-  <div class="support">Need help?<br><small>Contacta al admin</small></div>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <div class="search">
-          <input placeholder="Buscar" />
-        </div>
-        <div class="date">12 May 2022, Friday</div>
-      </header>
-
-      <section class="welcome">
-        <div class="welcome-left">
-          <h1>Welcome back, Stella Walton!</h1>
-          <p>New French speaking classes are available. Estudar en France for B1 and B2 levels.</p>
-          <button class="btn">Buy Lesson</button>
-        </div>
-        <div class="welcome-right">
-          <!-- ilustración/placeholder -->
-          <div class="illustration"></div>
-        </div>
-      </section>
-
-      <!-- Sección de cards estáticos eliminada (se renderiza dinámicamente desde app.js) -->
-
-      <section class="lessons">
-        <h2>Lessons</h2>
-        <table>
-          <thead>
-            <tr><th>Class</th><th>Teacher Name</th><th>Members</th><th>Starting</th><th>Material</th><th>Payment</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>A1</td><td>Bernard Carr</td><td>3</td><td>12.07.2022</td><td>Download</td><td>Done</td></tr>
-            <tr><td>A1</td><td>Henry Poole</td><td>2</td><td>17.07.2022</td><td>Download</td><td>Pending</td></tr>
-            <tr><td>A1</td><td>Helena Lowe</td><td>4</td><td>22.07.2022</td><td>Download</td><td>Done</td></tr>
-          </tbody>
-        </table>
-      </section>
-  </main>
-
-    <aside class="rightbar">
-      <div class="profile-card">
-        <img class="avatar" src="https://via.placeholder.com/80" alt="avatar" />
-        <h3>Stella Walton</h3>
-        <small>Student</small>
-        <button class="btn outline">Profile</button>
-      </div>
-
-      <div class="calendar">
-        <div class="cal-header">December 2022</div>
-        <div class="cal-grid">
-          <!-- pequeño mock de calendario -->
-          <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-          <!-- días (placeholder) -->
-          <div class="muted">28</div><div class="muted">29</div><div class="muted">30</div><div class="muted">1</div><div class="today">2</div><div>3</div><div>4</div>
-        </div>
-      </div>
-
-      <div class="reminders">
-        <h4>Reminders</h4>
-        <ul>
-          <li>Eng - Vocabulary test • 12 Dec</li>
-          <li>Eng - Speaking Class • 12 Dec</li>
-          <li>Eng - Essay • 12 Dec</li>
-        </ul>
-      </div>
-    </aside>
-    
-    <!-- Modal QR generado -->
-    <div id="qrModal" class="modal hidden" role="dialog" aria-modal="true">
-      <div class="modal-content">
-        <h3 id="qrTitle">Código QR</h3>
-        <div id="qrBody" class="qr-body"></div>
-        <button id="closeQr" class="btn">Cerrar</button>
-      </div>
-    </div>
-  </div>
-  <script src="app.js"></script>
-</body>
-</html>
+      </body>
+    </html>

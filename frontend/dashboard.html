@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Gestor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">Gestor</div>
+      <nav>
+        <a class="nav-item active">Dashboard</a>
+        <button id="nav-toma" class="nav-item teacher-only" style="display:none">Toma de Lista</button>
+        <button id="nav-reportes" class="nav-item teacher-only" style="display:none">Reportes</button>
+      </nav>
+      <button id="logoutBtn" aria-label="logout" class="nav-item" style="margin-top:12px;background:transparent;border:0;color:#ef4444;cursor:pointer">Cerrar Sesión</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="search"><input placeholder="Buscar" /></div>
+        <div class="date" id="todayDate"></div>
+      </header>
+
+      <section class="welcome">
+        <div class="welcome-left">
+          <h1 id="welcomeTitle">Bienvenido</h1>
+          <p id="welcomeMsg">Panel de control</p>
+        </div>
+        <div class="welcome-right"><div class="illustration"></div></div>
+      </section>
+
+      <div id="cardsContainer" class="dynamic-cards"></div>
+
+      <section class="lessons">
+        <h2>Lessons</h2>
+        <table>
+          <thead>
+            <tr><th>Class</th><th>Teacher Name</th><th>Members</th><th>Starting</th><th>Material</th><th>Payment</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A1</td><td>Bernard Carr</td><td>3</td><td>12.07.2022</td><td>Download</td><td>Done</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <aside class="rightbar">
+      <div class="profile-card">
+        <img class="avatar" src="https://via.placeholder.com/80" alt="avatar" />
+        <h3 id="profileName">Usuario</h3>
+        <small id="profileRole">Role</small>
+        <button class="btn outline">Profile</button>
+      </div>
+    </aside>
+
+    <div id="qrModal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <h3 id="qrTitle">Código QR</h3>
+        <div id="qrBody" class="qr-body"></div>
+        <button id="closeQr" class="btn">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="screens.js"></script>
+  <script>
+    const user = window.SCREENS.getUserFromStorage()
+    if(!user){ window.location.href='login.html' }
+
+    document.getElementById('profileName').textContent = user.name
+    document.getElementById('profileRole').textContent = user.type === 'student' ? 'Estudiante' : 'Profesor'
+    document.getElementById('welcomeTitle').textContent = `Bienvenido, ${user.name}`
+    document.getElementById('todayDate').textContent = new Date().toLocaleString()
+
+    const classes = user.type === 'student' ? window.SCREENS.studentClasses : window.SCREENS.teacherClasses
+    const container = document.getElementById('cardsContainer')
+    classes.forEach((c, idx)=>{
+      const card = document.createElement('div'); card.className='card'
+      const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
+      const headClass = gradientClasses[idx % gradientClasses.length]
+      card.innerHTML = `
+        <div class="card-head ${headClass}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
+          <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom:8px;color:#6b7280">${c.schedule}</div>
+          <div style="margin-bottom:12px;color:#6b7280">${user.type === 'student' ? (c.teacher||'') : ((c.students||c.studentsList.length) + ' estudiantes')}</div>
+          <button class="action-btn">${user.type === 'student' ? 'Ver Código QR' : 'Tomar Lista'}</button>
+        </div>`
+      const btn = card.querySelector('.action-btn')
+      btn.addEventListener('click', ()=>{
+        if(user.type === 'student'){
+          document.getElementById('qrTitle').textContent = `Código QR - ${c.code}`
+          document.getElementById('qrBody').innerHTML = `<div class="qr-placeholder">QR generado para <strong>${c.code}</strong></div>`
+          document.getElementById('qrModal').classList.remove('hidden')
+        } else {
+          // pasar a la pantalla de toma de lista con query
+          window.location.href = `attendance.html?classId=${c.id}`
+        }
+      })
+      container.appendChild(card)
+    })
+
+    // teacher-only nav
+    if(user.type === 'teacher'){
+      Array.from(document.querySelectorAll('.teacher-only')).forEach(el=>el.style.display='block')
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', ()=> window.SCREENS.logout())
+    document.getElementById('closeQr').addEventListener('click', ()=> document.getElementById('qrModal').classList.add('hidden'))
+    document.getElementById('nav-toma').addEventListener('click', ()=> window.location.href='attendance.html')
+    document.getElementById('nav-reportes').addEventListener('click', ()=> window.location.href='reports.html')
+  </script>
+</body>
+</html>

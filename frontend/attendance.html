@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Toma de lista — Gestor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div style="max-width:900px;margin:28px auto;padding:20px">
+    <button onclick="history.back()" class="btn outline">Volver</button>
+    <h2 id="attendanceTitle">Toma de lista</h2>
+    <div id="classInfo" style="margin-bottom:12px;color:#6b7280"></div>
+    <div id="attendanceStudents" class="bg-white p-4 rounded-xl shadow"></div>
+    <div style="margin-top:12px"><button id="saveAttendance" class="btn">Guardar asistencia</button> <button id="toReports" class="btn outline">Ver reportes</button></div>
+  </div>
+
+  <script src="screens.js"></script>
+  <script>
+    const user = window.SCREENS.getUserFromStorage()
+    if(!user) window.location.href='login.html'
+
+    const params = new URLSearchParams(location.search)
+    const classId = Number(params.get('classId') || '')
+    const classes = window.SCREENS.teacherClasses
+    const cls = classes.find(x=>x.id===classId) || classes[0]
+
+    document.getElementById('attendanceTitle').textContent = `Toma de lista — ${cls.name}`
+    document.getElementById('classInfo').textContent = `${cls.code} · ${cls.schedule}`
+
+    function render(){
+      const container = document.getElementById('attendanceStudents')
+      container.innerHTML = (cls.studentsList||[]).map((s,i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0"><span>${s}</span><label><input type="checkbox" data-idx="${i}" checked /> Presente</label></div>`).join('')
+    }
+    render()
+
+    document.getElementById('saveAttendance').addEventListener('click', ()=>{
+      const checkboxes = Array.from(document.querySelectorAll('#attendanceStudents input[type=checkbox]'))
+      const records = checkboxes.map((cb,i)=>({ student: cls.studentsList[i], present: !!cb.checked }))
+      const rec = { id: Date.now(), classId: cls.id, className: cls.name, date: new Date().toLocaleString(), records }
+      const arr = window.SCREENS.getStoredRecords(); arr.unshift(rec); window.SCREENS.persistStoredRecords(arr)
+      alert('Asistencia guardada')
+    })
+
+    document.getElementById('toReports').addEventListener('click', ()=> location.href='reports.html')
+  </script>
+</body>
+</html>

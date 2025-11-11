@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reportes — Gestor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div style="max-width:1000px;margin:28px auto;padding:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2>Reportes de asistencia</h2>
+      <div>
+        <button id="exportCSV" class="btn">Exportar CSV</button>
+        <button onclick="history.back()" class="btn outline">Volver</button>
+      </div>
+    </div>
+    <div id="reportsArea" class="bg-white p-4 rounded-xl shadow"></div>
+  </div>
+
+  <script src="screens.js"></script>
+  <script>
+    const recs = window.SCREENS.getStoredRecords()
+    const area = document.getElementById('reportsArea')
+    if(recs.length===0){ area.innerHTML = '<div style="color:#6b7280;padding:12px">No hay registros</div>' }
+    else{
+      const rows = recs.map(r=>`<tr><td style="padding:6px">${r.date}</td><td>${r.className}</td><td>${r.records.filter(x=>x.present).length}</td><td>${r.records.length}</td></tr>`).join('')
+      area.innerHTML = `<table style="width:100%"><thead><tr><th>Fecha</th><th>Clase</th><th>Presente</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>`
+    }
+
+    document.getElementById('exportCSV').addEventListener('click', function(){
+      const rows = [['Fecha','Clase','Presente','Total']]
+      recs.forEach(r=> rows.push([r.date,r.className,String(r.records.filter(x=>x.present).length),String(r.records.length)]))
+      window.SCREENS.exportCSV(rows)
+    })
+  </script>
+</body>
+</html>
