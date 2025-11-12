@@ -16,10 +16,21 @@ exports.handleTokenRefresh = async (req, res) => {
 
 
 // Controller function to handle logout requests
-exports.handleLogout = async (req, res) => {
+exports.handleGlobalLogout = async (req, res) => {
     const { userId } = req.body;
     try {
-        await logoutService.handleLogout(userId);
+        await logoutService.globalLogout(userId);
+        res.status(200).json();
+    } catch (error) {
+        res.status(500).json({ error: error.message }); 
+    }
+}
+
+// Controller function to handle single device logout requests
+exports.handleSingleDeviceLogout = async (req, res) => {
+    const { userId, refreshToken } = req.body;
+    try {
+        await logoutService.singleDeviceLogout(userId, refreshToken);
         res.status(200).json();
     } catch (error) {
         res.status(500).json({ error: error.message }); 

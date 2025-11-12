@@ -26,7 +26,8 @@ router.post('/login', SensibleRouteLimiter, userController.handleAuthentication)
 router.post('/refres_token', SensibleRouteLimiter, userController.handleTokenRefresh); // Route to refresh access token
 
 // protected routes
-router.post('/logout', StrictRouteLimiter, authenticateToken, userController.handleLogout); // Route to handle user logout
+router.post('/global_logout', StrictRouteLimiter, authenticateToken, userController.handleGlobalLogout);
+router.post('/single_logout', StrictRouteLimiter, authenticateToken, userController.handleSingleDeviceLogout);
 
 
 module.exports = router;

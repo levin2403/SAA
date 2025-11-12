@@ -1,31 +1,142 @@
-const users = [
-  { id: '00000240798', password: 'manager123', name: 'Bob Ross', rol: 'MANAGER', currentRefreshTokenHash: '', tokenVersion: 0 },
-  { id: '00000213145', password: 'sentinel123', name: 'Jhon Doe', rol: 'SENTINEL', currentRefreshTokenHash: '', tokenVersion: 0 },
-  { id: '00000584392', password: 'sentinel123', name: 'Martin Mcfly', rol: 'SENTINEL', currentRefreshTokenHash: '', tokenVersion: 0 }
-];
+const sessionModel = require('../models/session');
 
 // ---- USER QUERIES ----
-exports.findByUserId = (id) => users.find(u => u.id === id) || null;
-exports.getAllUsers = () => users;
+
+/**
+ * Find a user by the id given in the parameter.
+ * @param {String} userId 
+ */
+exports.findByUserId = async (userId) => {
+  return await sessionModel.findOne({ userId });
+};
+
+/**
+ * Retrieves all the created sessions (for testing purposes).
+ */
+exports.getAllSessions = async () => {
+  return await sessionModel.find({});
+};
 
 // ---- TOKEN HANDLING ----
-exports.updateRefreshTokenHash = (userId, hash) => {
-  const user = users.find(u => u.id === userId);
-  if (user) user.currentRefreshTokenHash = hash;
+
+/**
+ * Adds a new refresh token (hashed) for a certain user.
+ * Optionally removes the old one if provided.
+ * @param {String} userId 
+ * @param {String|null} lastRefreshToken - previously used hashed token (optional)
+ * @param {String} newRefreshToken - new hashed token
+ */
+exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToken) => {
+  const session = await sessionModel.findOne({ userId });
+  if (!session) return null;
+
+  // Si se pasa el anterior, lo elimina antes de agregar el nuevo
+  if (lastRefreshToken) {
+    session.refreshTokens = session.refreshTokens.filter(
+      t => t.hashedRefreshToken !== lastRefreshToken
+    );
+  }
+
+  // Agregar nuevo refresh token
+  session.refreshTokens.push({ hashedRefreshToken: newRefreshToken });
+  session.lastConnection = new Date();
+
+  await session.save();
+  return session;
 };
 
-exports.getRefreshTokenHash = (userId) => {
-  const user = users.find(u => u.id === userId);
-  return user ? user.currentRefreshTokenHash : null;
+/**
+ * Looks if any of the stored refresh tokens matches
+ * with the one given in the parameter.
+ * @param {String} userId 
+ * @param {String} refreshToken - hashed refresh token to verify
+ * @returns {Boolean}
+ */
+exports.validateRefreshTokenMatch = async (userId, refreshToken) => {
+  const session = await sessionModel.findOne({ userId });
+  if (!session) return false;
+
+  return session.refreshTokens.some(
+    t => t.hashedRefreshToken === refreshToken
+  );
 };
 
-// ---- TOKEN VERSION ----
-exports.incrementTokenVersion = (userId) => {
-  const user = users.find(u => u.id === userId);
-  if (user) user.tokenVersion += 1;
+/**
+ * Updates the last refresh token for the new one generated
+ * in the token refresh process.
+ * (Basically replaces one token for another)
+ * @param {String} userId 
+ * @param {String} lastRefreshToken 
+ * @param {String} newRefreshToken 
+ */
+exports.updateAccesTokenHash = async (userId, lastRefreshToken, newRefreshToken) => {
+  const session = await sessionModel.findOne({ userId });
+  if (!session) return null;
+
+  const tokenObj = session.refreshTokens.find(
+    t => t.hashedRefreshToken === lastRefreshToken
+  );
+
+  if (!tokenObj) return null;
+
+  tokenObj.hashedRefreshToken = newRefreshToken;
+  tokenObj.createdAt = new Date();
+
+  session.lastConnection = new Date();
+  await session.save();
+
+  return session;
 };
 
-exports.getTokenVersion = (userId) => {
-  const user = users.find(u => u.id === userId);
-  return user ? user.tokenVersion : null;
-};  
+// ---- SESSION HANDLING ---- //
+
+/**
+ * Counts the number of refresh tokens of the user.
+ * @param {String} userId 
+ */
+exports.getNumbreOfSessions = async (userId) => {
+  const session = await sessionModel.findOne({ userId });
+  return session ? session.refreshTokens.length : 0;
+};
+
+/**
+ * Deletes a user session based on the stored refresh token.
+ * @param {String} userId 
+ * @param {String} refreshToken 
+ */
+exports.singleLogout = async (userId, refreshToken) => {
+  const session = await sessionModel.findOne({ userId });
+  if (!session) return null;
+
+  session.refreshTokens = session.refreshTokens.filter(
+    t => t.hashedRefreshToken !== refreshToken
+  );
+
+  await session.save();
+  return session;
+};
+
+// ---- TOKEN VERSION ---- //
+
+/**
+ * Increments the token version to make all refresh tokens invalid.
+ * @param {String} userId 
+ */
+exports.incrementTokenVersion = async (userId) => {
+  const session = await sessionModel.findOneAndUpdate(
+    { userId },
+    { $inc: { tokenVersion: 1 }, $set: { refreshTokens: [] } }, // vacía los tokens
+    { new: true }
+  );
+  return session;
+};
+
+/**
+ * Retrieves the token version of a user.
+ * @param {String} userId 
+ * @returns {Number|null}
+ */
+exports.getTokenVersion = async (userId) => {
+  const session = await sessionModel.findOne({ userId });
+  return session ? session.tokenVersion : null;
+};

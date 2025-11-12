@@ -18,12 +18,14 @@ async function authenticateUser(userId, password) {
     // Validate user credentials
     validateUserCredentials(user, password);
 
+    // Validate number of sessions
+
     // Generate acces and refresh tokens
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // save refresh token hash
-    await saveTokenHash(user.id, refreshToken);
+    await saveAccesTokenHash(user.id, accessToken); // save acces token hash
+    await saveRefreshTokenHash(user.id, refreshToken); // save refresh token hash
 
     // Return user data and tokens
     return {
@@ -46,7 +48,19 @@ async function authenticateUser(userId, password) {
 // Verify required fields
 function validateInputFields(userId, password) {
   if (!userId || !password) {
-    throw new Error('Missing required fields: userId and password');
+    throw new Error('Missing required fields: userId and password');  
+  }
+}
+
+async function validateNumberOfSessions(){
+  try{
+    const activeSessions = await userRepository.getNumbreOfSessions();
+    if(activeSessions === process.env.MAX_SESSION_NUMBER){
+      throw new Error('Numero maximo de sesiones activas alcanzado');
+    }
+  }
+  catch(error){
+    throw new Error('Error al validar el numero de sesiones activas');
   }
 }
 
@@ -61,7 +75,7 @@ function validateUserCredentials(user, password) {
 function generateAccessToken(user) {
   try{
     return jwt.sign(
-      { userId: user.id, rol: user.rol, tokenVersion: user.tokenVersion },
+      { userId: user.id, tokenVersion: user.tokenVersion },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: '1m' }
     );
@@ -85,8 +99,14 @@ function generateRefreshToken(user) {
   }
 }
 
+// Saves the hashed access token in the user repository
+async function saveAccesTokenHash(userId, accessToken){
+  const accesTokenHash = crypto.createHash('sha256').update(accessToken).digest('hex');
+  await userRepository.updateAccesTokenHash(userId, accesTokenHash);
+}
+
 // Saves the hashed refresh token in the user repository
-async function saveTokenHash(userId, refreshToken) {
+async function saveRefreshTokenHash(userId, refreshToken) {
   const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
   await userRepository.updateRefreshTokenHash(userId, refreshTokenHash);
 }

@@ -22,19 +22,20 @@ async function refreshAccessToken(refreshToken) {
     validateUser(user); // validate found user
     
     // Verify that the token version matches
-    verifyTokenMatch(decoded, user);
-
+    verifyTokenVersionMatch(decoded, user);
     // Verify that the refresh token hash matches
     verifyHashMatch(refreshToken, user);
 
     // Generates a new access token
     const newAccessToken = generateAccessToken(user);
-
     // Generates a new refresh token
     const newRefreshToken = generateRefreshToken(user);
 
+    // Hashing the las refresh token for search in data base
+    const lastRefreshToken = hashLastRefreshToken(refreshToken)
+
     // Saves the new refresh token hash in the database
-    saveNewRefreshTokenHash(user, newRefreshToken)
+    saveNewRefreshTokenHash(user, lastRefreshToken, newRefreshToken)
 
     // Returns both tokens
     return {
@@ -65,7 +66,7 @@ function findUser(userId){
 }
 
 // Verify that the token version matches
-function verifyTokenMatch(decodeUser, storedUser){
+function verifyTokenVersionMatch(decodeUser, storedUser){
     // Verificar que la versión de token coincida
     if (decodeUser.tokenVersion !== storedUser.tokenVersion) {
       throw new Error("Token version mismatch — token revoked");
@@ -75,10 +76,8 @@ function verifyTokenMatch(decodeUser, storedUser){
 // Verify that the refresh token hash matches
 function verifyHashMatch(refreshToken, user){
     const incomingHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-    const storedHash = userRepository.getRefreshTokenHash(user.id);
-
-    if (incomingHash !== storedHash) {
-      throw new Error("Refresh token does not match (possibly revoked)");
+    if(!userRepository.validateRefreshTokenMatch(user.id, incomingHash)){
+      throw new Error('El token enviado no es valido');
     }
 }
 
@@ -87,7 +86,7 @@ function generateAccessToken(user) {
   return jwt.sign(
     { userId: user.id, rol: user.rol, tokenVersion: user.tokenVersion },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: '15m' }
+    { expiresIn: '10m' }
   );
 }
 
@@ -100,8 +99,12 @@ function generateRefreshToken(user) {
   );
 }
 
+function hashLastRefreshToken(lastRefreshToken){
+  return crypto.createHash("sha256").update(lastRefreshToken).digest("hex");
+}
+
 // Save the new refresh token hash in the database
-function saveNewRefreshTokenHash(user, newRefreshToken){
+function saveNewRefreshTokenHash(user, lastRefreshToken, newRefreshToken){
     const newRefreshTokenHash = crypto.createHash("sha256").update(newRefreshToken).digest("hex");
     userRepository.updateRefreshTokenHash(user.id, newRefreshTokenHash);
 }
