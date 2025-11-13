@@ -1,9 +1,12 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const outhRouter = require('./src/routers/auth.router');
+const connectDB = require('./src/config/db');  
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
+
+connectDB(); //dattabase connection
 
 // Rate limiting middleware configuration
 const limiter = rateLimit({

@@ -30,20 +30,30 @@ exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToke
   const session = await sessionModel.findOne({ userId });
   if (!session) return null;
 
-  // Si se pasa el anterior, lo elimina antes de agregar el nuevo
-  if (lastRefreshToken) {
-    session.refreshTokens = session.refreshTokens.filter(
-      t => t.hashedRefreshToken !== lastRefreshToken
-    );
-  }
+  // Deletes the last refresh token
+  session.refreshTokens = session.refreshTokens.filter(
+    t => t.hashedRefreshToken !== lastRefreshToken
+  );
 
-  // Agregar nuevo refresh token
+  // Add new refresh token
   session.refreshTokens.push({ hashedRefreshToken: newRefreshToken });
   session.lastConnection = new Date();
 
   await session.save();
   return session;
 };
+
+exports.addNewRefreshTokenHash = async (userId, refreshToken) => {
+    const session = await sessionModel.findOne({ userId });
+    if (!session) return null;
+
+    // Add new refresh token
+    session.refreshTokens.push({ hashedRefreshToken: refreshToken });
+    session.lastConnection = new Date();
+
+    await session.save();
+    return session;
+}
 
 /**
  * Looks if any of the stored refresh tokens matches
@@ -95,8 +105,13 @@ exports.updateAccesTokenHash = async (userId, lastRefreshToken, newRefreshToken)
  * @param {String} userId 
  */
 exports.getNumbreOfSessions = async (userId) => {
-  const session = await sessionModel.findOne({ userId });
-  return session ? session.refreshTokens.length : 0;
+  try{
+    const session = await sessionModel.findOne({ userId });
+    return session ? session.refreshTokens.length : 0;
+  }
+  catch(error){
+    console.log(error.message)
+  }
 };
 
 /**

@@ -5,7 +5,7 @@ const authenticateToken = require('../middlewares/auth.middleware');
 const userController = require('../controllers/users.controller');
 
 
-const SensibleRouteLimiter = rateLimit({
+const sensibleRouteLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 5, // Limit each IP to 5 login requests per `window`
     message: "Too many attempts from this IP, please try again later.",
@@ -13,7 +13,7 @@ const SensibleRouteLimiter = rateLimit({
     legacyHeaders: false,  // Disable the `X-RateLimit-*` headers
 });
 
-const StrictRouteLimiter = rateLimit({
+const strictRouteLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100,
     message: "Too many requests from this IP, please try again later.",
@@ -22,12 +22,12 @@ const StrictRouteLimiter = rateLimit({
 });
 
 // public routes
-router.post('/login', SensibleRouteLimiter, userController.handleAuthentication); // Route to handle user login
-router.post('/refres_token', SensibleRouteLimiter, userController.handleTokenRefresh); // Route to refresh access token
+router.post('/login', sensibleRouteLimiter, userController.handleAuthentication); // Route to handle user login
+router.post('/refresh_token', sensibleRouteLimiter, userController.handleTokenRefresh); // Route to refresh access token
 
 // protected routes
-router.post('/global_logout', StrictRouteLimiter, authenticateToken, userController.handleGlobalLogout);
-router.post('/single_logout', StrictRouteLimiter, authenticateToken, userController.handleSingleDeviceLogout);
+router.put('/global_logout', strictRouteLimiter, authenticateToken, userController.handleGlobalLogout);
+router.delete('/single_logout', strictRouteLimiter, authenticateToken, userController.handleSingleDeviceLogout);
 
 
 module.exports = router;

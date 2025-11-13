@@ -1,22 +1,19 @@
 const mongoose = require('mongoose');
 
+const RefreshTokenSchema = new mongoose.Schema({
+  hashedRefreshToken: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  expiresAt: { 
+    type: Date, 
+    default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days 
+  }
+}, { _id: false }); // _id false couse its not necessary for this schema
+
 const SessionSchema = new mongoose.Schema({
-  userId: {type: String, required: true, match: /^0{5}\d{5}$/},
-  tokenVersion: {type: Number, required: true },
-  lastConnection: { type: Date, default: Date.now},
-  refreshTokens: [
-    {
-      hashedRefreshToken: { type: String, required: true },
-      createdAt: { type: Date, default: Date.now },
-      expiresAt: { type: Date }
-    }
-  ]
+  userId: { type: String, required: true },
+  tokenVersion: { type: Number, required: true },
+  lastConnection: { type: Date, required: true },
+  refreshTokens: [RefreshTokenSchema]
 });
-
-// Index for fast search
-SessionSchema.index({userId: 1});
-
-// opcional: para limpiar sesiones inactivas viejas (TTL)
-//SessionSchema.index({ 'refreshTokens.expiresAt': 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model('Session', SessionSchema);

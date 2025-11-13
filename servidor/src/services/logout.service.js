@@ -1,4 +1,5 @@
 const userRepository = require('../repositories/user.repository');
+const crypto = require('crypto');
 
 
 // Function to handle user logout

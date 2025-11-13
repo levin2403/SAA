@@ -39,8 +39,8 @@ async function refreshAccessToken(refreshToken) {
 
     // Returns both tokens
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
+      access_token: newAccessToken,
+      refresh_token: newRefreshToken,
     };
   } catch (error) {
     console.error("Refresh token error:", error);
