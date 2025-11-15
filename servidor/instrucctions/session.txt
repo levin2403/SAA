@@ -1,0 +1,28 @@
+Instructions to insert new sessions in the database:
+
+db.sessions.insertOne({
+  userId: "00000240798",  
+  tokenVersion: 0,
+  lastConnection: new Date(),
+  refreshTokens: []
+});
+
+db.sessions.insertOne({
+  userId: "00000239834",  
+  tokenVersion: 0,
+  lastConnection: new Date(),
+  refreshTokens: []
+});
+
+db.sessions.insertOne({
+  userId: "00000234592",  
+  tokenVersion: 0,
+  lastConnection: new Date(),
+  refreshTokens: []
+});
+
+db.getCollection("sessions").find({}) // to list all users
+
+db.sessions.drop({userId: "00000240798"});
+db.sessions.drop({userId: "00000239834"});
+db.sessions.drop({userId: "00000234592"});
