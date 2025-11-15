@@ -6,14 +6,16 @@ const sessionModel = require('../models/session');
  * Find a user by the id given in the parameter.
  * @param {String} userId 
  */
-exports.findByUserId = async (userId) => {
+exports.findBySessionId = async (userId) => 
+{
   return await sessionModel.findOne({ userId });
 };
 
 /**
  * Retrieves all the created sessions (for testing purposes).
  */
-exports.getAllSessions = async () => {
+exports.getAllSessions = async () => 
+{
   return await sessionModel.find({});
 };
 
@@ -26,7 +28,8 @@ exports.getAllSessions = async () => {
  * @param {String|null} lastRefreshToken - previously used hashed token (optional)
  * @param {String} newRefreshToken - new hashed token
  */
-exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToken) => {
+exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToken) => 
+{
   const session = await sessionModel.findOne({ userId });
   if (!session) return null;
 
