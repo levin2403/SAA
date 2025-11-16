@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const rateLimit = require('express-rate-limit');
-const authenticateToken = require('../middlewares/auth.middleware');
-const userController = require('../controllers/users.controller');
+const sessionController = require('../controllers/session.controller');
 
 
 const sensibleRouteLimiter = rateLimit({
@@ -13,21 +12,9 @@ const sensibleRouteLimiter = rateLimit({
     legacyHeaders: false,  // Disable the `X-RateLimit-*` headers
 });
 
-const strictRouteLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100,
-    message: "Too many requests from this IP, please try again later.",
-    standardHeaders: true, 
-    legacyHeaders: false,  
-});
-
 // public routes
-router.post('/login', sensibleRouteLimiter, userController.handleAuthentication); // Route to handle user login
-router.post('/refresh_token', sensibleRouteLimiter, userController.handleTokenRefresh); // Route to refresh access token
-
-// protected routes
-router.put('/global_logout', strictRouteLimiter, authenticateToken, userController.handleGlobalLogout);
-router.delete('/single_logout', strictRouteLimiter, authenticateToken, userController.handleSingleDeviceLogout);
+router.post('/login', sensibleRouteLimiter, sessionController.handleAuthentication); // Route to handle user login
+router.post('/refresh_token', sensibleRouteLimiter, sessionController.handleTokenRefresh); // Route to refresh access token
 
 
 module.exports = router;

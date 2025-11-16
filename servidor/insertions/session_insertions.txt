@@ -1,0 +1,35 @@
+
+db.sessions.insertOne({
+  userId: "00000247527",  
+  tokenVersion: 0,
+  lastConnection: new Date(),
+  refreshTokens: []
+});
+
+db.sessions.insertOne({
+  userId: "00000240798",  
+  tokenVersion: 0,
+  lastConnection: new Date(),
+  refreshTokens: []
+});
+
+db.sessions.insertOne({
+  userId: "00000240474",  
+  tokenVersion: 0,
+  lastConnection: new Date(),
+  refreshTokens: []
+});
+
+db.sessions.insertOne({
+  userId: "00000250545",  
+  tokenVersion: 0,
+  lastConnection: new Date(),
+  refreshTokens: []
+});
+
+db.getCollection("sessions").find({}) 
+
+db.sessions.deleteOne({userId: "00000247527"});
+db.sessions.deleteOne({userId: "00000240798"});
+db.sessions.deleteOne({userId: "00000240474"});
+db.sessions.deleteOne({userId: "00000250545"});
