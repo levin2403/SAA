@@ -25,21 +25,19 @@ class ExternalApiService {
   {
     try 
     {
-      const response = await this.api.post('/users/validate_credentials/', {
-        data: {
+      const response = await this.api.post('users/validate_credentials/',
+        {
           user_id: userId,
           password: password
         }
-      });
-      return response.data;
+      );
+      return response.data; 
     } 
     catch (error)
     {
-      console.error(
-        'An error ocurred while validating the credentials', 
-        error.message
-      );
-      throw new Error();
+      console.error('An error ocurred while validating the credentials: ', error.message);
+      const backendErrorMessage = error.response?.data;
+      throw new Error(backendErrorMessage);
     }
   }
 
@@ -53,16 +51,16 @@ class ExternalApiService {
   {
     try 
     {
+      console.log(classId);
       const response = await this.api.get('/classes/students/', {
-        data: {
-          class_id: classId
-        }
+        params: { class_id: classId }
       });
       return response.data;
     } catch (error) 
     {
       console.error('Error al obtener usuarios:', error.message);
-      throw new Error();
+      const backendErrorMessage = error.response?.data;
+      throw new Error(backendErrorMessage);
     }
   }
 
@@ -76,18 +74,15 @@ class ExternalApiService {
   {
     try 
     {
-      const response = await this.api.get('/users/classes', {
-        data: {
-          user_id: userId
-        }
+      const response = await this.api.get('/users/classes/', {
+        params: { user_id: userId }
       });
       return response.data;
     } catch (error) 
     {
-      console.error('An error has ocurred while consulting a user clases:', 
-        error.message
-      );
-      throw new Error();
+      console.error('An error has ocurred while consulting a user clases:', error.message);
+      const backendErrorMessage = error.response?.data;
+      throw new Error(backendErrorMessage);
     }
   }
 

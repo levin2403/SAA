@@ -25,8 +25,9 @@ exports.validateUserCredentials = async (req, res) =>
 exports.getUserClassesById = async (req, res) => 
 {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.query;
         const classes = await userRepository.getUserClassesById(user_id);
+
         res.status(200).json(classes);
     }
     catch (error) {

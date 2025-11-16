@@ -1,7 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const userRepository = require('../repositories/user.repository');
+const sessionRepository = require('../repositories/session.repository');
 const userService = require('../integration/user.service');
 
 /**
@@ -19,15 +19,16 @@ async function authenticateUser(userId, password) {
     const user = await validateUserCredentials(userId, password);
 
     //get the user session
+    const userSession = await findSessionByUserId(userId)
 
     // Validates the user amounts of sessions
-    await validateNumberOfSessions(user)
+    await validateNumberOfSessions(userSession)
 
     // Generate acces and refresh tokens
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const accessToken = generateAccessToken(user, userSession);
+    const refreshToken = generateRefreshToken(user, userSession);
 
-    await saveRefreshTokenHash(user.id, refreshToken); // save refresh token hash
+    await saveRefreshTokenHash(userId, refreshToken); // save refresh token hash
 
     // Return user data and tokens
     return {
@@ -42,7 +43,7 @@ async function authenticateUser(userId, password) {
       },
     };
   } catch (error) {
-    console.error('Authentication error:', error);
+    console.error('Authentication error:', error.message);
     throw new Error(error.message);
   }
 }
@@ -54,9 +55,21 @@ function validateInputFields(userId, password) {
   }
 }
 
-async function validateNumberOfSessions(user){
+// Find session by id
+async function findSessionByUserId(userId){
   try{
-    const activeSessions = await userRepository.getNumbreOfSessions(user.id);
+      const session = await sessionRepository.findBySessionId(userId);
+      return session;
+  }
+  catch(error){
+      throw new Error("No se pudo refrescar el token de acceso");
+  }
+}
+
+// Validate if the number of sessions is under the permited limit
+async function validateNumberOfSessions(sessions){
+  try{
+    const activeSessions = sessions.refreshTokens.length; //amount of sessions
     if (activeSessions === Number(process.env.MAX_SESSION_NUMBER)) {
       throw new Error('Numero maximo de sesiones activas alcanzado');
     }
@@ -70,11 +83,11 @@ async function validateNumberOfSessions(user){
 async function validateUserCredentials(userId, password) 
 {
   try{
-      const user = await userService.validateUserCredentials();
-      return user;
+      const response = await userService.validateUserCredentials(userId, password);
+      return response.user;
   }
   catch(error){
-
+      throw new Error(error.message);
   }
 }
 
@@ -83,18 +96,13 @@ async function validateUserCredentials(userId, password)
  * @param {*} user 
  * @returns 
  */
-function generateAccessToken(user) 
+function generateAccessToken(user, userSession) 
 {
-  try{
     return jwt.sign(
-      { userId: user.id, tokenVersion: user.tokenVersion },
+      { userId: user.id, userName: user.name, rol: user.rol, tokenVersion: userSession.tokenVersion },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: '15m' }
     );
-  }
-  catch (error) {
-    throw new Error('Could not generate access token');
-  }
 }
 
 /**
@@ -102,28 +110,23 @@ function generateAccessToken(user)
  * @param {Object} user 
  * @returns 
  */
-function generateRefreshToken(user) 
+function generateRefreshToken(user, userSession) 
 {
-  try{
     return jwt.sign(
-      { userId: user.id, tokenVersion: user.tokenVersion },
+      { userId: user.id, userName: user.name, rol: user.rol, tokenVersion: userSession.tokenVersion  },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: '7d' }
     );
-  }
-  catch (error) {
-    throw new Error('Could not generate refresh token');
-  }
 }
 
 /**
  * Saves the hashed refresh token in the user repository
- * @param {String} userId 
- * @param {String} refreshToken 
+ * @param {String} userId
+ * @param {String} refreshToken
  */
 async function saveRefreshTokenHash(userId, refreshToken) {
   const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-  await userRepository.addNewRefreshTokenHash(userId, refreshTokenHash);
+  await sessionRepository.addNewRefreshTokenHash(userId, refreshTokenHash);
 }
 
 module.exports = { authenticateUser };

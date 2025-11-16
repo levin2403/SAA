@@ -1,7 +1,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const userRepository = require("../repositories/user.repository");
+const sessionRepository = require('../repositories/session.repository');
 
 
 /**
@@ -15,27 +15,26 @@ async function refreshAccessToken(refreshToken) {
     if (!refreshToken) {
       throw new Error("Missing refresh token");
     }
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    validateUser(decoded) // validate decoded user
+    const decodedSession = decodeSession(refreshToken);
+    validateSession(decodedSession) // validate decoded session
 
-    const user = findUser(decoded.userId);
-    validateUser(user); // validate found user
+    const storedSession = await findSessionByUserId(decodedSession.userId);
     
     // Verify that the token version matches
-    verifyTokenVersionMatch(decoded, user);
+    verifyTokenVersionMatch(decodedSession, storedSession);
     // Verify that the refresh token hash matches
-    verifyHashMatch(refreshToken, user);
+    verifyHashMatch(refreshToken, storedSession);
 
     // Generates a new access token
-    const newAccessToken = generateAccessToken(user);
+    const newAccessToken = generateAccessToken(storedSession);
     // Generates a new refresh token
-    const newRefreshToken = generateRefreshToken(user);
+    const newRefreshToken = generateRefreshToken(storedSession);
 
     // Hashing the las refresh token for search in data base
     const lastRefreshToken = hashLastRefreshToken(refreshToken)
 
     // Saves the new refresh token hash in the database
-    saveNewRefreshTokenHash(user, lastRefreshToken, newRefreshToken)
+    await saveNewRefreshTokenHash(storedSession, lastRefreshToken, newRefreshToken)
 
     // Returns both tokens
     return {
@@ -44,40 +43,66 @@ async function refreshAccessToken(refreshToken) {
     };
   } catch (error) {
     console.error("Refresh token error:", error);
-    throw new Error(`Could not refresh access token`);
+    throw new Error(error.message);
   }
 }
 
-// Validate that user exists
-function validateUser(user){
-    if(!user){
-        throw new Error("User not found");
-    }
+/**
+ * 
+ * @param {*} refreshToken 
+ * @returns 
+ */
+function decodeSession(refreshToken)
+{
+  try{
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    console.log("decoded session: ", decoded);
+    return decoded;
+  }
+  catch(error){
+    console.log('Error decoding session: ', error.message);
+    throw new Error('Token erroneo o expirado - acceso revocado');
+  }
+}
+
+/**
+ * 
+ * @param {*} decodedSession 
+ */
+function validateSession(decodedSession){
+    if(!decodeSession){
+      console.log('The decoded session is missing');
+      throw new Error('Token erroneo o expirado - acceso revocado');
+    } 
 }
 
 // Find user by ID
-function findUser(userId){
+function findSessionByUserId(userId){
     try{
-        return userRepository.findByUserId(userId);
+      console.log();
+        return sessionRepository.findBySessionId(userId);
     }
     catch(error){
-        throw new Error("User not found");
+        throw new Error("No se pudo refrescar el token de acceso");
     }
 }
 
 // Verify that the token version matches
 function verifyTokenVersionMatch(decodeUser, storedUser){
-    // Verificar que la versión de token coincida
-    if (decodeUser.tokenVersion !== storedUser.tokenVersion) {
-      throw new Error("Token version mismatch — token revoked");
-    }
+  console.log('decoded user version: ', decodeUser.tokenVersion)
+  console.log(storedUser)
+   if (decodeUser.tokenVersion !== storedUser.tokenVersion) {
+    throw new Error(
+      "Las versiones de los tokens no coinciden - acceso revocado"
+    );
+  }
 }
 
 // Verify that the refresh token hash matches
 function verifyHashMatch(refreshToken, user){
     const incomingHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-    if(!userRepository.validateRefreshTokenMatch(user.id, incomingHash)){
-      throw new Error('El token enviado no es valido');
+    if(!sessionRepository.validateRefreshTokenMatch(user.id, incomingHash)){
+      throw new Error('El token enviado no es valido - acceso revocado');
     }
 }
 
@@ -104,9 +129,9 @@ function hashLastRefreshToken(lastRefreshToken){
 }
 
 // Save the new refresh token hash in the database
-function saveNewRefreshTokenHash(user, lastRefreshToken, newRefreshToken){
+async function saveNewRefreshTokenHash(user, lastRefreshToken, newRefreshToken){
     const newRefreshTokenHash = crypto.createHash("sha256").update(newRefreshToken).digest("hex");
-    userRepository.updateRefreshTokenHash(user.id, newRefreshTokenHash);
+    await sessionRepository.updateRefreshTokenHash(user.id, lastRefreshToken, newRefreshTokenHash);
 }
 
 module.exports = { refreshAccessToken };

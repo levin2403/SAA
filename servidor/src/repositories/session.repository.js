@@ -8,7 +8,13 @@ const sessionModel = require('../models/session');
  */
 exports.findBySessionId = async (userId) => 
 {
-  return await sessionModel.findOne({ userId });
+  try{
+    return await sessionModel.findOne({ userId }, {_id: 0, userId: 0, lastConnection: 0, __v: 0});
+  }
+  catch(error){
+    console.log(error.message);
+    throw new Error();
+  }
 };
 
 /**
@@ -25,7 +31,7 @@ exports.getAllSessions = async () =>
  * Adds a new refresh token (hashed) for a certain user.
  * Optionally removes the old one if provided.
  * @param {String} userId 
- * @param {String|null} lastRefreshToken - previously used hashed token (optional)
+ * @param {String} lastRefreshToken - previously used hashed token
  * @param {String} newRefreshToken - new hashed token
  */
 exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToken) => 
@@ -46,16 +52,17 @@ exports.updateRefreshTokenHash = async (userId, lastRefreshToken, newRefreshToke
   return session;
 };
 
-exports.addNewRefreshTokenHash = async (userId, refreshToken) => {
-    const session = await sessionModel.findOne({ userId });
-    if (!session) return null;
+exports.addNewRefreshTokenHash = async (userId, refreshToken) => 
+{
+  const session = await sessionModel.findOne({'userId': userId });
+  if (!session) return null;
 
-    // Add new refresh token
-    session.refreshTokens.push({ hashedRefreshToken: refreshToken });
-    session.lastConnection = new Date();
+  // Add new refresh token
+  session.refreshTokens.push({ hashedRefreshToken: refreshToken });
+  session.lastConnection = new Date();
 
-    await session.save();
-    return session;
+  await session.save();
+  return session;
 }
 
 /**
@@ -65,7 +72,8 @@ exports.addNewRefreshTokenHash = async (userId, refreshToken) => {
  * @param {String} refreshToken - hashed refresh token to verify
  * @returns {Boolean}
  */
-exports.validateRefreshTokenMatch = async (userId, refreshToken) => {
+exports.validateRefreshTokenMatch = async (userId, refreshToken) => 
+{
   const session = await sessionModel.findOne({ userId });
   if (!session) return false;
 
@@ -82,7 +90,8 @@ exports.validateRefreshTokenMatch = async (userId, refreshToken) => {
  * @param {String} lastRefreshToken 
  * @param {String} newRefreshToken 
  */
-exports.updateAccesTokenHash = async (userId, lastRefreshToken, newRefreshToken) => {
+exports.updateAccesTokenHash = async (userId, lastRefreshToken, newRefreshToken) => 
+{
   const session = await sessionModel.findOne({ userId });
   if (!session) return null;
 
@@ -107,7 +116,8 @@ exports.updateAccesTokenHash = async (userId, lastRefreshToken, newRefreshToken)
  * Counts the number of refresh tokens of the user.
  * @param {String} userId 
  */
-exports.getNumbreOfSessions = async (userId) => {
+exports.getNumbreOfSessions = async (userId) => 
+{
   try{
     const session = await sessionModel.findOne({ userId });
     return session ? session.refreshTokens.length : 0;
@@ -122,7 +132,8 @@ exports.getNumbreOfSessions = async (userId) => {
  * @param {String} userId 
  * @param {String} refreshToken 
  */
-exports.singleLogout = async (userId, refreshToken) => {
+exports.singleLogout = async (userId, refreshToken) => 
+{
   const session = await sessionModel.findOne({ userId });
   if (!session) return null;
 
@@ -140,7 +151,8 @@ exports.singleLogout = async (userId, refreshToken) => {
  * Increments the token version to make all refresh tokens invalid.
  * @param {String} userId 
  */
-exports.incrementTokenVersion = async (userId) => {
+exports.incrementTokenVersion = async (userId) => 
+{
   const session = await sessionModel.findOneAndUpdate(
     { userId },
     { $inc: { tokenVersion: 1 }, $set: { refreshTokens: [] } }, // vacía los tokens
@@ -154,7 +166,8 @@ exports.incrementTokenVersion = async (userId) => {
  * @param {String} userId 
  * @returns {Number|null}
  */
-exports.getTokenVersion = async (userId) => {
+exports.getTokenVersion = async (userId) => 
+{
   const session = await sessionModel.findOne({ userId });
   return session ? session.tokenVersion : null;
 };

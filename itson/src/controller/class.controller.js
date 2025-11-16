@@ -8,8 +8,9 @@ const classRepository = require('../repository/class.repository');
 exports.getStudentsByClassId = async (req, res) => 
 {
     try {
-        const classId = req.body.class_id;  
-        const students = await classRepository.getStudentsByClassId(classId);
+        const {class_id} = req.query; 
+        console.log(class_id); 
+        const students = await classRepository.getStudentsByClassId(class_id);
         res.status(200).json(students);
     }
     catch (error) {
