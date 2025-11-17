@@ -33,6 +33,21 @@
   function getUserFromStorage(){ try{return JSON.parse(localStorage.getItem('saa_currentUser')||'null')}catch(e){return null} }
   function logout(){ localStorage.removeItem('saa_currentUser'); window.location.href='login.html' }
 
+  function getAttendanceRecordsByDateRange(startDate, endDate, classId=null){
+    const recs = getStoredRecords()
+    return recs.filter(r=>{
+      const d = new Date(r.date).toLocaleDateString()
+      const s = new Date(startDate).toLocaleDateString()
+      const e = new Date(endDate).toLocaleDateString()
+      const inRange = d >= s && d <= e
+      return classId ? (inRange && r.classId === classId) : inRange
+    })
+  }
+
+  function formatDateForInput(date){
+    return date.toISOString().split('T')[0]
+  }
+
   // Exponer
   window.SCREENS.users = users
   window.SCREENS.studentClasses = studentClasses
@@ -43,5 +58,7 @@
   window.SCREENS.saveUserToStorage = saveUserToStorage
   window.SCREENS.getUserFromStorage = getUserFromStorage
   window.SCREENS.logout = logout
+  window.SCREENS.getAttendanceRecordsByDateRange = getAttendanceRecordsByDateRange
+  window.SCREENS.formatDateForInput = formatDateForInput
 
 })()
