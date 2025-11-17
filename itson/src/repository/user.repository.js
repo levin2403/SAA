@@ -23,8 +23,31 @@ exports.getUserById = async (userId) =>
  * @param {String} userId 
  * @returns 
  */
-exports.getUserClassesById = async (userId) => 
-{
-    return await userModel.findOne({ 
-        id: userId}, {_id: 0, classes: 1}).populate('classes', {students: 0});
+exports.getStudentClassesById = async (userId) => {
+    return await userModel
+      .findOne({ id: userId }, { _id: 0, classes: 1 })
+      .populate({
+        path: 'classes',
+        select: { students: 0 },
+        populate: {
+          path: 'teacher',
+          select: { _id: 0, name: 1 }
+        },
+        options: { lean: { virtuals: false } }
+      })
+      .lean({ virtuals: false });
+  };
+  
+
+/**
+  * Get all the classes that belong to a certain teacher
+  * 
+  * @param {String} professorId 
+  * @returns 
+*/
+exports.getProfessorClassesById = async (professorId) => 
+{ 
+    return await userModel.findOne({ id: professorId}, {_id: 0, classes: 1}). 
+    populate('classes', { teacher: 0});
 }
+

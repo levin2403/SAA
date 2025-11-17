@@ -1,11 +1,11 @@
-const attendanceModel = require('../models/attendance.model');
+const attendanceModel = require('../models/classSession.model');
 
 /**
  * Get the class atendance of a specific date
  * @param {String} classId
  * @param {Date} date 
  */
-exports.getAttendanceByDate = async(classId, date) =>
+exports.getAttendance = async(classId, professorId, date) =>
 {
     try{
         // Normalize the date to start of day for accurate comparison
@@ -16,6 +16,7 @@ exports.getAttendanceByDate = async(classId, date) =>
 
         const attendance = await attendanceModel.findOne({
             classId: classId,
+            professorId: professorId,
             date: {
                 $gte: startOfDay,
                 $lte: endOfDay
@@ -81,7 +82,7 @@ exports.insertAttendance = async(attendance) =>
             classId: attendance.classId,
             professorId: attendance.professorId,
             date: attendance.date,
-            attendances: attendance.attendances || []
+            attendances: attendance.attendances || []   
         });
 
         const savedAttendance = await newAttendance.save();
@@ -102,19 +103,16 @@ exports.insertAttendance = async(attendance) =>
  * @param {String} studentId 
  * @param {String} state 
  */
-exports.changeAssistenceState = async(attendanceId, studentId, state) =>
+exports.changeAssistenceState = async(attendanceId, studentId, status) =>
 {
     try{
-        // Convert boolean state to schema enum value
-        const status = state ? 'PRESENT' : 'ABSENT';
-
         // Use MongoDB's array update operator to update the student's status
         const updatedAttendance = await attendanceModel.findOneAndUpdate(
             { 
                 _id: attendanceId,
                 'attendances.studentId': studentId 
             },
-            { 
+            {
                 $set: { 
                     'attendances.$.status': status,
                     'attendances.$.updatedAt': new Date()
@@ -131,7 +129,7 @@ exports.changeAssistenceState = async(attendanceId, studentId, state) =>
     }
     catch(error){
         console.log(
-            'An error ocurred while changing the assistance state', 
+            'An error ocurred while changing the assistance status', 
             error.message
         );
         throw error;

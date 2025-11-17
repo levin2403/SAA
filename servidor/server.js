@@ -12,5 +12,5 @@ app.use('/', usersRouter);
 
 // Start the server
 app.listen(3001, () => {
-  console.log('Gateway server is running on port 3001');
+  console.log('server is running on port 3001');
 });

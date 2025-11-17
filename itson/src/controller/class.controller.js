@@ -17,3 +17,22 @@ exports.getStudentsByClassId = async (req, res) =>
         res.status(500).json(error.message);
     }
 }
+
+/**
+ * Controller function to get the classes of a teacher by his id.
+ * @param {Object} req 
+ * @param {Object} res 
+ */
+exports.getProfessorClassesDays = async (req, res) => 
+{
+    try {
+        const { class_id } = req.query;
+        console.log("ya llegue pai, ", class_id);
+        const classes = await classRepository.getProfessorClassDays(class_id);
+            
+        res.status(200).json(classes);
+    }
+    catch (error) {
+        res.status(500).json(error.message);
+    }
+}

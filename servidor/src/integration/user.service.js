@@ -52,7 +52,7 @@ class ExternalApiService {
     try 
     {
       console.log(classId);
-      const response = await this.api.get('/classes/students/', {
+      const response = await this.api.get('classes/students/', {
         params: { class_id: classId }
       });
       return response.data;
@@ -65,17 +65,17 @@ class ExternalApiService {
   }
 
   /**
-   * Call to the external API to request all classes that a user
+   * Call to the external API to request all classes that a student
    * belongs.
-   * @param {String} userId 
+   * @param {String} studentId 
    * @returns Object array with the corresponding user clases.
    */
-  async getUserClassesById(userId) 
+  async getStudentClassesById(studentId) 
   {
     try 
     {
-      const response = await this.api.get('/users/classes/', {
-        params: { user_id: userId }
+      const response = await this.api.get('student/classes/', {
+        params: { student_id: studentId }
       });
       return response.data;
     } catch (error) 
@@ -86,6 +86,51 @@ class ExternalApiService {
     }
   }
 
+  /**
+   * Call to the external API to request all classes that a professor
+   * belongs.
+   * @param {String} userId 
+   * @returns Object array with the corresponding teacher clases.
+   */
+  async getProfessorClassesById(teacherId) 
+  {
+    try 
+    {
+      const response = await this.api.get('professor/classes/', {
+        params: { professor_id: teacherId }
+      });
+      return response.data;
+    } catch (error) 
+    {
+      console.error('An error has ocurred while consulting a professor clases:', error.message);
+      const backendErrorMessage = error.response?.data;
+      throw new Error(backendErrorMessage);  
+    }
+  }
+
+/**
+   * Call to the external API to request all classes that a teacher
+   * belongs.
+   * @param {String} userId 
+   * @returns Object array with the corresponding teacher clases.
+   */
+async getProfessorClassesDays(classId) 
+{
+  try 
+  {
+    const response = await this.api.get('professor/classes/days/', {
+      params: { classId: professorId }
+    });
+    return response.data;
+  } catch (error) 
+  {
+    console.error('An error has ocurred while consulting a user clases:', error.message);
+    const backendErrorMessage = error.response?.data;
+    throw new Error(backendErrorMessage);
+  }
 }
+
+}
+
 
 module.exports = new ExternalApiService();

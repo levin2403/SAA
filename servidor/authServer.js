@@ -25,5 +25,5 @@ app.use('/', outhRouter);
 
 // Start the server
 app.listen(3002, () => {
-  console.log('Gateway server is running on port 3002');
+  console.log('server is running on port 3002');
 });

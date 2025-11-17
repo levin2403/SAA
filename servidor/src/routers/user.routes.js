@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
 const authenticateToken = require('../middlewares/auth.middleware');
 const userController = require('../controllers/users.controller');
 
@@ -11,7 +12,8 @@ const routeLimiter = rateLimit({
     legacyHeaders: false,  
 });
 
-router.get('/user/classes', routeLimiter, authenticateToken, userController.getUserClassesById)
+router.get('/student/classes', routeLimiter, authenticateToken, userController.getStudentClassesById)
+router.get('/professor/classes', routeLimiter, authenticateToken, userController.getProfessorClassesById)
 //router.get('/classes/members', routeLimiter, authenticateToken, userController.getStudentsByClassId)
 router.put('/global_logout', routeLimiter, authenticateToken, userController.handleGlobalLogout);
 router.delete('/single_logout', routeLimiter, authenticateToken, userController.handleSingleDeviceLogout);
