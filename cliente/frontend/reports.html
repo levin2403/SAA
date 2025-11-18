@@ -186,10 +186,12 @@
         return
       }
 
-      const rows = [['Materia','Fecha','Estudiante','Presente']]
+      const rows = [['Materia','Fecha','ID Estudiante','Nombre','Presente']]
       records.forEach(r => {
         r.records.forEach(student => {
-          rows.push([r.className, r.date, student.student, student.present ? 'Sí' : 'No'])
+          const studentId = student.student.id || 'N/A'
+          const studentName = student.student.name || student.student
+          rows.push([r.className, r.date, studentId, studentName, student.present ? 'Sí' : 'No'])
         })
       })
 

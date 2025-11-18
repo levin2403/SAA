@@ -22,8 +22,6 @@ a<!doctype html>
     </div>
 
     <div class="attendance-info">
-      <div><strong>Materia:</strong><span id="classNameInfo"></span></div>
-      <div><strong>Código:</strong><span id="classCodeInfo"></span></div>
       <div><strong>Fecha:</strong><input type="date" id="attendanceDate" /></div>
       <div><strong>Horario:</strong><span id="classScheduleInfo"></span></div>
     </div>
@@ -61,9 +59,7 @@ a<!doctype html>
     const today = new Date()
     document.getElementById('attendanceDate').value = window.SCREENS.formatDateForInput(today)
 
-    document.getElementById('attendanceTitle').textContent = `Toma de lista — ${cls.name}`
-    document.getElementById('classNameInfo').textContent = cls.name
-    document.getElementById('classCodeInfo').textContent = cls.code
+    document.getElementById('attendanceTitle').textContent = `Toma de lista — ${cls.name} - ${cls.code}`
     document.getElementById('classScheduleInfo').textContent = cls.schedule
 
     let qrReaderActive = false
@@ -73,7 +69,10 @@ a<!doctype html>
       const container = document.getElementById('attendanceStudents')
       container.innerHTML = (cls.studentsList||[]).map((s,i)=>`
         <div class="student-item">
-          <span>${s}</span>
+          <div>
+            <strong>${s.name || s}</strong>
+            <div style="color:#6b7280;font-size:12px">ID: ${s.id || '200'+(i+1)}</div>
+          </div>
           <label>
             <input type="checkbox" data-idx="${i}" class="student-checkbox" checked /> 
             Presente

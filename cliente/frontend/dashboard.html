@@ -9,20 +9,15 @@
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">Gestor</div>
-      <nav>
-        <a class="nav-item active" id="nav-dashboard" onclick="navigateTo('#')">Dashboard</a>
-        <button id="nav-reportes" class="nav-item teacher-only" style="display:none">Reportes</button>
-      </nav>
-      <button id="logoutBtn" aria-label="logout" class="nav-item" style="margin-top:12px;background:transparent;border:0;color:#ef4444;cursor:pointer">Cerrar Sesión</button>
-    </aside>
-
     <main class="main">
       <header class="topbar">
         <button class="mobile-menu-toggle" id="menuToggle" aria-label="menu">☰</button>
         <div class="search"><input placeholder="Buscar" /></div>
-        <div class="date" id="todayDate"></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="date" id="todayDate"></div>
+          <button id="nav-reportes-top" class="btn secondary teacher-only" style="display:none;padding:8px 14px;font-size:13px">Reportes</button>
+          <button id="logoutBtn-top" class="btn danger" style="padding:8px 14px;font-size:13px">Cerrar Sesión</button>
+        </div>
       </header>
 
       <section class="welcome">
@@ -47,15 +42,6 @@
         </table>
       </section>
     </main>
-
-    <aside class="rightbar" id="rightbar">
-      <div class="profile-card">
-        <img class="avatar" src="https://via.placeholder.com/80" alt="avatar" />
-        <h3 id="profileName">Usuario</h3>
-        <small id="profileRole">Role</small>
-        <button class="btn outline" style="width:100%;margin-top:10px">Profile</button>
-      </div>
-    </aside>
 
     <div id="qrModal" class="modal hidden" role="dialog" aria-modal="true">
       <div class="modal-content">
@@ -82,24 +68,18 @@
     const user = window.SCREENS.getUserFromStorage()
     if(!user){ window.location.href='login.html' }
 
-    document.getElementById('profileName').textContent = user.name
-    document.getElementById('profileRole').textContent = user.type === 'student' ? 'Estudiante' : 'Profesor'
     document.getElementById('welcomeTitle').textContent = `Bienvenido, ${user.name}`
     document.getElementById('todayDate').textContent = new Date().toLocaleString()
 
     const classes = user.type === 'student' ? window.SCREENS.studentClasses : window.SCREENS.teacherClasses
     const container = document.getElementById('cardsContainer')
-    const sidebar = document.getElementById('sidebar')
     const menuToggle = document.getElementById('menuToggle')
 
-    // Mobile menu toggle
-    menuToggle.addEventListener('click', ()=> sidebar.classList.toggle('open'))
+    // Mobile menu toggle (nota: sidebar fue removido)
+    // menuToggle.addEventListener('click', ()=> sidebar.classList.toggle('open'))
 
     // Navegación mejorada
     function navigateTo(page){
-      sidebar.classList.remove('open')
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'))
-      event.target?.classList.add('active')
       if(page !== '#'){
         setTimeout(() => window.location.href = page, 100)
       }
@@ -138,14 +118,16 @@
     }
 
     // Logout confirmation modal
-    const logoutBtn = document.getElementById('logoutBtn')
+    const logoutBtnTop = document.getElementById('logoutBtn-top')
     const logoutConfirmModal = document.getElementById('logoutConfirmModal')
     const confirmLogout = document.getElementById('confirmLogout')
     const cancelLogout = document.getElementById('cancelLogout')
 
-    logoutBtn.addEventListener('click', ()=> {
+    function openLogoutConfirm(){
       logoutConfirmModal.classList.remove('hidden')
-    })
+    }
+
+    logoutBtnTop.addEventListener('click', openLogoutConfirm)
 
     confirmLogout.addEventListener('click', ()=> {
       window.SCREENS.logout()
@@ -162,7 +144,7 @@
     })
 
     document.getElementById('closeQr').addEventListener('click', ()=> document.getElementById('qrModal').classList.add('hidden'))
-    document.getElementById('nav-reportes').addEventListener('click', ()=> navigateTo('reports.html'))
+    document.getElementById('nav-reportes-top').addEventListener('click', ()=> window.location.href='reports.html')
   </script>
 </body>
 </html>
