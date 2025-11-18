@@ -1,4 +1,3 @@
-const authService = require('../services/auth.service');
 const userService = require('../integration/user.service');
 
 

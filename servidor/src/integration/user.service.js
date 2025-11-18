@@ -108,27 +108,27 @@ class ExternalApiService {
     }
   }
 
-/**
-   * Call to the external API to request all classes that a teacher
-   * belongs.
-   * @param {String} userId 
-   * @returns Object array with the corresponding teacher clases.
-   */
-async getProfessorClassesDays(classId) 
-{
-  try 
+  /**
+     * Call to the external API to request all classes that a teacher
+     * belongs.
+     * @param {String} userId 
+     * @returns Object array with the corresponding teacher clases.
+     */
+  async getProfessorClassesDays(classId) 
   {
-    const response = await this.api.get('professor/classes/days/', {
-      params: { classId: professorId }
-    });
-    return response.data;
-  } catch (error) 
-  {
-    console.error('An error has ocurred while consulting a user clases:', error.message);
-    const backendErrorMessage = error.response?.data;
-    throw new Error(backendErrorMessage);
+    try 
+    {
+      const response = await this.api.get('professor/classes/days/', {
+        params: { class_id: classId }
+      });
+      return response.data;
+    } catch (error) 
+    {
+      console.error('An error has ocurred while consulting a user clases:', error.message);
+      const backendErrorMessage = error.response?.data;
+      throw new Error(backendErrorMessage);
+    }
   }
-}
 
 }
 

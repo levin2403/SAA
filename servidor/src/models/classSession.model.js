@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 
 const AttendanceRecordSchema = new mongoose.Schema({
-  studentId: { type: String, required: true },
-  studentName: {type: String, required: true },
+  id: { type: String, required: true },
+  name: {type: String, required: true },
   status: { type: String, enum: ['PRESENT', 'ABSENT'], default: 'ABSENT' },
-});
+}, { _id: false });
 
 const ClassSessionSchema = new mongoose.Schema({
+  classId: { type: String, required: true },
   professorId: { type: String, required: true },
   date: { type: Date, required: true },
   attendances: [AttendanceRecordSchema]

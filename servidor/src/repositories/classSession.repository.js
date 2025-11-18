@@ -5,7 +5,7 @@ const attendanceModel = require('../models/classSession.model');
  * @param {String} classId
  * @param {Date} date 
  */
-exports.getAttendance = async(classId, professorId, date) =>
+exports.getClassSession = async(classId, professorId, date) =>
 {
     try{
         // Normalize the date to start of day for accurate comparison
@@ -14,7 +14,7 @@ exports.getAttendance = async(classId, professorId, date) =>
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 
-        const attendance = await attendanceModel.findOne({
+        const classSession = await attendanceModel.findOne({
             classId: classId,
             professorId: professorId,
             date: {
@@ -23,7 +23,7 @@ exports.getAttendance = async(classId, professorId, date) =>
             }
         });
 
-        return attendance;
+        return classSession;
     }
     catch(error){
         console.log(
@@ -75,14 +75,14 @@ exports.getAttendancesByDates = async(classId, professorId, begining, end) =>
  * Inserts an attendance in the database.
  * @param {Object} attendance - Should contain classId, professorId, date, and attendances array
  */
-exports.insertAttendance = async(attendance) =>
+exports.insertClassSession = async(classSession) =>
 {
     try{
         const newAttendance = new attendanceModel({
-            classId: attendance.classId,
-            professorId: attendance.professorId,
-            date: attendance.date,
-            attendances: attendance.attendances || []   
+            classId: classSession.classId,
+            professorId: classSession.professorId,
+            date: classSession.date,
+            attendances: classSession.students || []   
         });
 
         const savedAttendance = await newAttendance.save();

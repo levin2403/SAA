@@ -1,0 +1,41 @@
+db.getCollection("classsessions").find({})
+
+db.classsessions.deleteOne({professorId: "00000250545"});
+
+db.classsessions.insertOne({
+    "_id" : ObjectId("671fd9e2a3b12c7f9c1a1234"),
+    "classId" : "671fd9e2a3b12c7f9c1a0012",
+    "professorId" : "00000250545",
+    "date" : ISODate("2025-03-10T08:00:00.000+0000"),
+    "attendances" : [
+        {
+            "studentId" : "00000247527",
+            "studentName" : "Jesus Gabriel Medina Leyva",
+            "status" : "PRESENT"
+        },
+        {
+            "studentId" : "00000240798",
+            "studentName" : "Kevin Jared Sanchez Figueroa",
+            "status" : "ABSENT"
+        }
+    ]
+});
+
+db.classsessions.insertOne({
+    "_id" : ObjectId("691bb1a2e60ec5039b35ee1d"),
+    "classId" : "671fd9e2a3b12c7f9c1a0013",
+    "professorId" : "00000250545",
+    "date" : ISODate("2025-04-10T07:20:00.000+0000"),
+    "attendances" : [
+        {
+            "id" : "00000247527",
+            "name" : "Jesus Gabriel Medina Leyva",
+            "status" : "ABSENT"
+        },
+        {
+            "id" : "00000240798",
+            "name" : "Kevin Jared Sanchez Figueroa",
+            "status" : "ABSENT"
+        }
+    ]
+});

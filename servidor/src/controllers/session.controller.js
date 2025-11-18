@@ -1,6 +1,7 @@
 // Controller function to handle token refresh requests
 const refreshTokenService = require('../services/refreshToken.service');
 const authService = require('../services/auth.service');
+const getClassSessionService = require('../services/getClassSession.service');
 
 
 // Controller function to handle authentication requests
@@ -14,6 +15,7 @@ exports.handleAuthentication = async(req, res) => {
     }
   }
 
+// Controller function to handle the token refresh
 exports.handleTokenRefresh = async (req, res) => {
     try {
         const { refresh_token } = req.body;
@@ -23,6 +25,7 @@ exports.handleTokenRefresh = async (req, res) => {
         res.status(403).json({ error: error.message });
     }
 }
+
 
 // Controller function to get all users
 //exports.getAllSessions = async (req, res) => {
