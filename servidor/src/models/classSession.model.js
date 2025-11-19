@@ -14,6 +14,6 @@ const ClassSessionSchema = new mongoose.Schema({
 });
 
 // Un índice compuesto evita duplicar sesiones de una misma clase y fecha
-ClassSessionSchema.index({ classId: 1, date: 1 }, { unique: true });  
+ClassSessionSchema.index({ classId: 1, professorId: 1, date: 1 }, { unique: true });  
 
 module.exports = mongoose.model('classSession', ClassSessionSchema);

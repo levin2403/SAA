@@ -33,15 +33,15 @@ exports.getClassSession = async(classId, professorId, date) =>
         throw error;
     }
 }
-
+   
 /**
  * Gets the atendances that exist between the two dates
- * especified in the two arguments
+ * especified in the two arguments.
  * 
- * @param {String} classId
- * @param {String} professorId
- * @param {Date} begining 
- * @param {Date} end 
+ * @param {String} classId id of the class.
+ * @param {String} professorId id of the professor.
+ * @param {Date} begining Starting date of the range.
+ * @param {Date} end Ending date of the range.
  */
 exports.getAttendancesByDates = async(classId, professorId, begining, end) =>
 {
@@ -58,13 +58,13 @@ exports.getAttendancesByDates = async(classId, professorId, begining, end) =>
                 $gte: startDate,
                 $lte: endDate
             }
-        }).sort({ date: 0 }); // Sort by date descending
+        }, {_id: 0, date: 1, attendances: 1}).sort({ date: 1 }); // Sort by date descending
 
         return attendances;
     }
     catch(error){
         console.log(
-            'An error ocurred while getting the attendances in a range of dates', 
+             'An error ocurred while getting the attendances in a range of dates',
             error.message
         );
         throw error;
@@ -73,7 +73,7 @@ exports.getAttendancesByDates = async(classId, professorId, begining, end) =>
 
 /**
  * Inserts an attendance in the database.
- * @param {Object} attendance - Should contain classId, professorId, date, and attendances array
+ * @param {Object} classSession
  */
 exports.insertClassSession = async(classSession) =>
 {
@@ -81,7 +81,7 @@ exports.insertClassSession = async(classSession) =>
         const newAttendance = new attendanceModel({
             classId: classSession.classId,
             professorId: classSession.professorId,
-            date: classSession.date,
+            date: new Date(classSession.date),
             attendances: classSession.students || []   
         });
 
@@ -98,34 +98,21 @@ exports.insertClassSession = async(classSession) =>
 }
 
 /**
- * Changes the assistence state of a certain user in the specified attendance
- * @param {String} attendanceId 
- * @param {String} studentId 
- * @param {String} state 
+ * Updates the attendances array for a specific class session
+ * @param {String} classSessionId 
+ * @param {Array} attendances - Array of attendance records
+ * @returns {Object|null} - The updated class session document or null if not found
  */
-exports.changeAssistenceState = async(attendanceId, studentId, status) =>
+exports.updateAttendences = async(classSessionId, attendances) =>
 {
     try{
-        // Use MongoDB's array update operator to update the student's status
-        const updatedAttendance = await attendanceModel.findOneAndUpdate(
+        // Use MongoDB's findOneAndUpdate to update and return the updated document
+        await attendanceModel.findOneAndUpdate(
             { 
-                _id: attendanceId,
-                'attendances.studentId': studentId 
+                _id: classSessionId
             },
-            {
-                $set: { 
-                    'attendances.$.status': status,
-                    'attendances.$.updatedAt': new Date()
-                } 
-            },
-            { new: true } // Return the updated document
+            { $set: { attendances: attendances } }
         );
-
-        if (!updatedAttendance) {
-            throw new Error('Attendance record or student not found');
-        }
-
-        return updatedAttendance;
     }
     catch(error){
         console.log(

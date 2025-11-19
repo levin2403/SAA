@@ -58,7 +58,7 @@ class ExternalApiService {
       return response.data;
     } catch (error) 
     {
-      console.error('Error al obtener usuarios:', error.message);
+      console.error('An error ocurred while retriving the class students:', error.message);
       const backendErrorMessage = error.response?.data;
       throw new Error(backendErrorMessage);
     }
@@ -124,7 +124,9 @@ class ExternalApiService {
       return response.data;
     } catch (error) 
     {
-      console.error('An error has ocurred while consulting a user clases:', error.message);
+      console.error(
+        'An error has ocurred while consulting the professor clases days:', error.message
+      );
       const backendErrorMessage = error.response?.data;
       throw new Error(backendErrorMessage);
     }
