@@ -1,5 +1,6 @@
 const express = require('express');
 const connectDB = require('./src/config/db');  
+const outhRouter = require('./src/routers/auth.router');
 const usersRouter = require('./src/routers/user.routes');
 const getClassSessionRouter = require('./src/routers/classSession.router');
 
@@ -9,6 +10,7 @@ app.use(express.json()); // Middleware to parse JSON bodies
 connectDB(); //dattabase connection
 
 // Protected routes
+app.use('/', outhRouter);
 app.use('/', usersRouter);
 app.use('/', getClassSessionRouter);
 
