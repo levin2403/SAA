@@ -1,6 +1,6 @@
 const express = require('express');
 const connectDB = require('./src/config/db');  
-const outhRouter = require('./src/routers/auth.router');
+const outhRouter = require('./src/routers/session.router');
 const usersRouter = require('./src/routers/user.routes');
 const getClassSessionRouter = require('./src/routers/classSession.router');
 

@@ -15,6 +15,8 @@ const sensibleRouteLimiter = rateLimit({
 // public routes
 router.post('/login', sensibleRouteLimiter, sessionController.handleAuthentication); // Route to handle user login
 router.post('/refresh_token', sensibleRouteLimiter, sessionController.handleTokenRefresh); // Route to refresh access token
+router.put('/global_logout', routeLimiter, authenticateToken, sessionController.handleGlobalLogout);
+router.delete('/single_logout', routeLimiter, authenticateToken, sessionController.handleSingleDeviceLogout); 
 
 
 module.exports = router;

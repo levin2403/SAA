@@ -1,7 +1,7 @@
 // Controller function to handle token refresh requests
 const refreshTokenService = require('../services/refreshToken.service');
 const authService = require('../services/auth.service');
-const getClassSessionService = require('../services/getClassSession.service');
+const logoutService = require('../services/logout.service');
 
 
 // Controller function to handle authentication requests
