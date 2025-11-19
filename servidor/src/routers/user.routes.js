@@ -14,8 +14,6 @@ const routeLimiter = rateLimit({
 
 router.get('/student/classes', routeLimiter, authenticateToken, userController.getStudentClassesById)
 router.get('/professor/classes', routeLimiter, authenticateToken, userController.getProfessorClassesById)
-router.put('/global_logout', routeLimiter, authenticateToken, userController.handleGlobalLogout);
-router.delete('/single_logout', routeLimiter, authenticateToken, userController.handleSingleDeviceLogout);
 
 
 module.exports = router;

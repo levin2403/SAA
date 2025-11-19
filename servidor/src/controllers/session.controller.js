@@ -27,12 +27,24 @@ exports.handleTokenRefresh = async (req, res) => {
 }
 
 
-// Controller function to get all users
-//exports.getAllSessions = async (req, res) => {
-//  try {
-//    const users = await sessionRepository.getAllSessions();
-//    res.status(200).json(users);
-//    } catch (error) {
-//    res.status(500).json(error.message);
-//  }
-//}
+// Controller function to handle logout requests
+exports.handleGlobalLogout = async (req, res) => {
+  const { id } = req.body;
+  try {
+      await logoutService.globalLogout(id);
+      res.status(200).json();
+  } catch (error) {
+      res.status(500).json({ error: error.message }); 
+  }
+}
+
+// Controller function to handle single device logout requests
+exports.handleSingleDeviceLogout = async (req, res) => {
+  const { id, refreshToken } = req.body;
+  try {
+      await logoutService.singleDeviceLogout(id, refreshToken);
+      res.status(200).json();
+  } catch (error) {
+      res.status(500).json({ error: error.message }); 
+  }
+}
