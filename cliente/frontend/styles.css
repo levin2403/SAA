@@ -2,20 +2,20 @@
 body{background:#f3f6fb;color:#111827}
 
 /* Layout similar al proyecto React (sidebar fijo a la izquierda, main con margen) */
-.sidebar{position:fixed;left:0;top:0;height:100vh;width:16rem;background:#fff;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.08);display:flex;flex-direction:column;gap:12px}
+.sidebar{position:fixed;left:0;top:0;height:100vh;width:16rem;background:#fff;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.08);display:flex;flex-direction:column;gap:12px;z-index:40}
 .brand{font-weight:800;font-size:20px}
-.nav-item{display:block;padding:10px 12px;border-radius:12px;color:#6b7280;margin-bottom:8px;text-decoration:none;cursor:pointer}
+.nav-item{display:block;padding:10px 12px;border-radius:12px;color:#6b7280;margin-bottom:8px;text-decoration:none;cursor:pointer;border:none;font-size:1rem;text-align:left}
 .nav-item.active{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:#fff;font-weight:700}
 .nav-item:hover{background:#f1f5f9}
 .support{margin-top:auto;font-size:12px;color:#6b7280}
 
 .app{min-height:100vh}
-.main{margin-left:16rem;margin-right:20rem;padding:40px 32px}
+.main{margin-left:0;margin-right:0;padding:40px 32px}
 
 /* Right sidebar (opcional) */
-.rightbar{position:fixed;right:0;top:0;width:20rem;height:100vh;padding:20px;background:#fff;box-shadow:0 10px 30px rgba(2,6,23,0.05)}
+.rightbar{position:fixed;right:0;top:0;width:20rem;height:100vh;padding:20px;background:#fff;box-shadow:0 10px 30px rgba(2,6,23,0.05);z-index:30}
 
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
 .search input{padding:10px 14px;border-radius:10px;border:1px solid #e6e9ef;width:320px}
 
 .welcome{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#ffffff 60%, #f7fafc);padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(20,30,60,0.04);margin-bottom:18px}
@@ -23,12 +23,17 @@ body{background:#f3f6fb;color:#111827}
 .welcome-left p{color:#6b7280;margin-bottom:10px}
 
 /* Buttons - gradientes y outline */
-.btn{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:#fff;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(99,102,241,0.12)}
+.btn{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:#fff;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(99,102,241,0.12);transition:all 0.3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,0.2)}
 .btn.outline{background:transparent;border:1px solid #e6eefc;color:#0f172a}
+.btn.outline:hover{background:#f1f5f9}
+.btn.danger{background:linear-gradient(90deg,#ef4444,#dc2626);color:#fff}
+.btn.secondary{background:#f3f4f6;color:#111827;border:1px solid #e5e7eb}
 
 /* Card styles (parecido a React) */
 .dynamic-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
-.card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+.card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.06);transition:all 0.3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 15px 40px rgba(2,6,23,0.1)}
 .card .card-head{height:160px;padding:20px;color:#fff;display:flex;flex-direction:column;justify-content:space-between}
 .card .card-body{padding:18px}
 .code-pill{background:rgba(255,255,255,0.12);padding:6px 10px;border-radius:10px;font-weight:600}
@@ -37,7 +42,8 @@ body{background:#f3f6fb;color:#111827}
 .gradient-purple{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
 .gradient-pink{background:linear-gradient(135deg,#f472b6,#fb923c)}
 
-.action-btn{width:100%;padding:10px;border-radius:12px;border:0;background:#f3f4f6;cursor:pointer}
+.action-btn{width:100%;padding:12px;border-radius:12px;border:0;background:#f3f4f6;cursor:pointer;font-weight:600;transition:all 0.3s}
+.action-btn:hover{background:#e5e7eb}
 
 /* Login */
 .login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(10,20,60,0.03),rgba(250,250,255,0.6));z-index:50}
@@ -54,8 +60,64 @@ body{background:#f3f6fb;color:#111827}
 .qr-body{padding:12px}
 .qr-placeholder{width:220px;height:220px;border-radius:16px;background:linear-gradient(135deg,#eef2ff,#fce7f3);display:flex;align-items:center;justify-content:center;margin:0 auto}
 
+/* Confirmation Modal */
+.confirm-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:70}
+.confirm-modal.hidden{display:none}
+.confirm-modal-content{background:#fff;padding:32px;border-radius:16px;max-width:400px;width:94%;box-shadow:0 20px 60px rgba(2,6,23,0.3);text-align:center}
+.confirm-modal-content h3{margin-bottom:12px;color:#111827}
+.confirm-modal-content p{color:#6b7280;margin-bottom:24px;font-size:14px}
+.confirm-modal-buttons{display:flex;gap:12px;justify-content:center}
+.confirm-modal-buttons .btn{flex:1}
+
+/* Attendance screen */
+.attendance-container{max-width:900px;margin:28px auto;padding:20px}
+.attendance-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.attendance-info{margin-bottom:12px;color:#6b7280;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.attendance-students{background:#fff;padding:16px;border-radius:12px;box-shadow:0 2px 8px rgba(2,6,23,0.05);max-height:400px;overflow-y:auto;margin-bottom:12px}
+.student-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f3f4f6}
+.student-item:last-child{border-bottom:none}
+.qr-section{background:#fff;padding:16px;border-radius:12px;box-shadow:0 2px 8px rgba(2,6,23,0.05);margin-bottom:12px;text-align:center}
+.qr-reader-container{width:100%;max-width:300px;margin:12px auto;border-radius:8px;overflow:hidden}
+#qr-reader{width:100%;border-radius:8px}
+
+/* Reports screen */
+.reports-container{max-width:1200px;margin:28px auto;padding:20px}
+.reports-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.reports-filters{background:#fff;padding:16px;border-radius:12px;box-shadow:0 2px 8px rgba(2,6,23,0.05);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.reports-filters label{display:block;font-weight:600;margin-bottom:4px;font-size:14px}
+.reports-filters input,.reports-filters select{width:100%;padding:8px 12px;border-radius:8px;border:1px solid #e5e7eb}
+.reports-table-container{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(2,6,23,0.05);overflow-x:auto}
+.reports-table-container table{width:100%;border-collapse:collapse;font-size:14px}
+.reports-table-container th{background:#f9fafb;padding:12px;text-align:left;font-weight:600;color:#6b7280;border-bottom:2px solid #e5e7eb}
+.reports-table-container td{padding:12px;border-bottom:1px solid #f3f4f6}
+.reports-table-container tbody tr:hover{background:#f9fafb}
+
 .notice-box{position:fixed;right:20px;top:20px;background:#fffbeb;border:1px solid #fce7a9;padding:10px;border-radius:8px;display:none;z-index:70}
 
+/* Mobile menu toggle */
+.mobile-menu-toggle{display:none;background:none;border:none;cursor:pointer;font-size:24px;color:#6b7280;padding:8px}
+
 /* Responsive adjustments */
-@media (max-width:1000px){.dynamic-cards{grid-template-columns:repeat(2,1fr)}.main{margin-right:0;padding:24px}}
-@media (max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:16px}.dynamic-cards{grid-template-columns:1fr}}
+@media (max-width:1200px){
+  .main{margin-right:0}
+  .rightbar{display:none}
+  .dynamic-cards{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:900px){
+  .main{padding:24px}
+  .search input{width:100%}
+  .dynamic-cards{grid-template-columns:1fr}
+}
+
+@media (max-width:768px){
+  .sidebar{position:fixed;left:-100%;top:0;width:16rem;height:100vh;transition:left 0.3s;z-index:50}
+  .sidebar.open{left:0}
+  .mobile-menu-toggle{display:block}
+  .main{margin-left:0;margin-right:0;padding:16px}
+  .topbar{padding:0 0 16px}
+  .search input{width:100%}
+  .dynamic-cards{gap:12px}
+  .confirm-modal-buttons{flex-direction:column}
+  .reports-filters{grid-template-columns:1fr}
+}
