@@ -12,8 +12,8 @@ const routeLimiter = rateLimit({
     legacyHeaders: false,  
 });
 
-router.get('/student/classes', routeLimiter, authenticateToken, userController.getStudentClassesById)
-router.get('/professor/classes', routeLimiter, authenticateToken, userController.getProfessorClassesById)
+router.get('/student/classes', routeLimiter, userController.getStudentClassesById)
+router.get('/professor/classes', routeLimiter, userController.getProfessorClassesById)
 
 
 module.exports = router;

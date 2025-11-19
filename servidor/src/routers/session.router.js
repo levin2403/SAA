@@ -12,11 +12,19 @@ const sensibleRouteLimiter = rateLimit({
     legacyHeaders: false,  // Disable the `X-RateLimit-*` headers
 });
 
+const routeLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,
+    message: "Haz realizado demasiadas peticiones, espera un poco he intenta de nuevo.",
+    standardHeaders: true, 
+    legacyHeaders: false,  
+});
+
 // public routes
 router.post('/login', sensibleRouteLimiter, sessionController.handleAuthentication); // Route to handle user login
 router.post('/refresh_token', sensibleRouteLimiter, sessionController.handleTokenRefresh); // Route to refresh access token
-router.put('/global_logout', routeLimiter, authenticateToken, sessionController.handleGlobalLogout);
-router.delete('/single_logout', routeLimiter, authenticateToken, sessionController.handleSingleDeviceLogout); 
+router.put('/global_logout', routeLimiter, sessionController.handleGlobalLogout);
+router.delete('/single_logout', routeLimiter, sessionController.handleSingleDeviceLogout); 
 
 
 module.exports = router;
