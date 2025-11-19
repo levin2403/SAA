@@ -20,6 +20,7 @@
         </div>
       </header>
 
+
       <section class="welcome">
         <div class="welcome-left">
           <h1 id="welcomeTitle">Bienvenido</h1>
@@ -102,9 +103,18 @@
       const btn = card.querySelector('.action-btn')
       btn.addEventListener('click', ()=>{
         if(user.type === 'student'){
+          const qrData = window.SCREENS.generateQRData(user.id, user.name, c.id, c.code)
           document.getElementById('qrTitle').textContent = `Código QR - ${c.code}`
-          document.getElementById('qrBody').innerHTML = `<div class="qr-placeholder">QR generado para <strong>${c.code}</strong></div>`
+          document.getElementById('qrBody').innerHTML = ''
           document.getElementById('qrModal').classList.remove('hidden')
+          
+          // Generar QR como imagen usando API
+          const encodedData = encodeURIComponent(qrData)
+          const img = document.createElement('img')
+          img.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedData}`
+          img.style.borderRadius = '8px'
+          img.alt = 'Código QR'
+          document.getElementById('qrBody').appendChild(img)
         } else {
           window.location.href = `attendance.html?classId=${c.id}`
         }

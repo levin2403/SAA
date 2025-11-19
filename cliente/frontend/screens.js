@@ -61,6 +61,26 @@
     return date.toISOString().split('T')[0]
   }
 
+  function generateQRData(studentId, studentName, classId, classCode){
+    return JSON.stringify({
+      type: 'attendance_qr',
+      studentId: studentId,
+      studentName: studentName,
+      classId: classId,
+      classCode: classCode,
+      timestamp: new Date().toISOString()
+    })
+  }
+
+  function parseQRData(qrText){
+    try {
+      const data = JSON.parse(qrText)
+      return (data.type === 'attendance_qr') ? data : null
+    } catch(e) {
+      return null
+    }
+  }
+
   // Exponer
   window.SCREENS.users = users
   window.SCREENS.studentClasses = studentClasses
@@ -73,5 +93,7 @@
   window.SCREENS.logout = logout
   window.SCREENS.getAttendanceRecordsByDateRange = getAttendanceRecordsByDateRange
   window.SCREENS.formatDateForInput = formatDateForInput
+  window.SCREENS.generateQRData = generateQRData
+  window.SCREENS.parseQRData = parseQRData
 
 })()

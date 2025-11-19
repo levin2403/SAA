@@ -57,7 +57,8 @@ body{background:#f3f6fb;color:#111827}
 .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:60}
 .hidden{display:none}
 .modal-content{background:#fff;padding:28px;border-radius:20px;max-width:520px;width:94%;text-align:center;box-shadow:0 18px 50px rgba(2,6,23,0.2)}
-.qr-body{padding:12px}
+.qr-body{padding:12px;display:flex;justify-content:center;align-items:center;min-height:320px}
+.qr-body canvas{max-width:100%;height:auto;border-radius:8px}
 .qr-placeholder{width:220px;height:220px;border-radius:16px;background:linear-gradient(135deg,#eef2ff,#fce7f3);display:flex;align-items:center;justify-content:center;margin:0 auto}
 
 /* Confirmation Modal */
@@ -121,3 +122,39 @@ body{background:#f3f6fb;color:#111827}
   .confirm-modal-buttons{flex-direction:column}
   .reports-filters{grid-template-columns:1fr}
 }
+
+/* Notification Toast */
+.notification-toast{
+  position:fixed;
+  bottom:-80px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:16px 24px;
+  border-radius:12px;
+  font-weight:600;
+  color:#fff;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  z-index:100;
+  transition:bottom 0.3s ease;
+  max-width:90%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.notification-toast.show{
+  bottom:20px
+}
+
+.notification-toast.success{
+  background:linear-gradient(135deg,#10b981,#059669)
+}
+
+.notification-toast.error{
+  background:linear-gradient(135deg,#ef4444,#dc2626)
+}
+
+.notification-toast.info{
+  background:linear-gradient(135deg,#3b82f6,#2563eb)
+}
+

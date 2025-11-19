@@ -74,7 +74,7 @@ a<!doctype html>
             <div style="color:#6b7280;font-size:12px">ID: ${s.id || '200'+(i+1)}</div>
           </div>
           <label>
-            <input type="checkbox" data-idx="${i}" class="student-checkbox" checked /> 
+            <input type="checkbox" data-idx="${i}" data-student-id="${s.id || '200'+(i+1)}" class="student-checkbox" checked /> 
             Presente
           </label>
         </div>
@@ -142,12 +142,42 @@ a<!doctype html>
     }
 
     function onScanSuccess(decodedText, decodedResult){
-      // Aquí iría la lógica de mapear IDs de estudiantes desde QR
-      // Por ahora, marcamos como presente si el texto contiene "PRESENT"
-      if(decodedText.includes('PRESENT')){
-        document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = true)
-        document.getElementById('qrStatus').textContent = 'Status: Estudiante marcado como presente'
+      const qrData = window.SCREENS.parseQRData(decodedText)
+      
+      if(!qrData || qrData.type !== 'attendance_qr'){
+        showNotification('✗ Código QR inválido', 'error')
+        return
       }
+      
+      const checkbox = document.querySelector(`.student-checkbox[data-student-id="${qrData.studentId}"]`)
+      
+      if(!checkbox){
+        showNotification(`✗ Estudiante no encontrado: ${qrData.studentName}`, 'error')
+        return
+      }
+      
+      if(checkbox.checked){
+        showNotification(`⚠ ${qrData.studentName} ya marcado`, 'info')
+        return
+      }
+      
+      checkbox.checked = true
+      showNotification(`✓ Asistencia tomada: ${qrData.studentName}`, 'success')
+    }
+    
+    function showNotification(message, type){
+      const toast = document.createElement('div')
+      toast.className = `notification-toast ${type}`
+      toast.textContent = message
+      document.body.appendChild(toast)
+      
+      toast.offsetHeight // Trigger reflow for animation
+      toast.classList.add('show')
+      
+      setTimeout(()=>{
+        toast.classList.remove('show')
+        setTimeout(()=> toast.remove(), 300)
+      }, 3000)
     }
 
     function onScanError(error){
