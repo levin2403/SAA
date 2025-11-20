@@ -1,0 +1,99 @@
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
+}
+
+body{
+    background:#f3f6fb;
+    color:#111827
+}
+
+/* Login */
+.login-screen{
+    inset:0;
+    display:flex;
+    align-items:center;
+    background:linear-gradient(180deg,rgba(10,20,60,0.03),rgba(250,250,255,0.6));
+    z-index:50
+}
+
+.login-card{
+    background:#fff;
+    padding:28px;
+    border-radius:16px;
+    box-shadow:0 12px 40px rgba(20,30,60,0.08);
+    width:100%;
+    max-width:520px;
+    text-align:center
+}
+
+.logo-icon{
+    width:56px;
+    height:56px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:800;
+    margin-bottom:8px
+}
+
+#loginForm{
+    margin-top: 2rem;
+    gap: 1rem
+}
+
+label{
+    display:block;
+    text-align:start;
+    margin-left: 0.5rem;
+}
+
+.login-card input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #eef2ff;
+    margin:8px 0
+}
+
+.login-error{
+    display:none;
+    color:#9b1c1c;
+    background:#fff6f6;
+    border:1px solid #f5c2c2;
+    padding:8px;
+    border-radius:8px;
+    margin:6px 0
+}
+
+.demo-credentials{
+    font-size:13px;
+    color:#475569;
+    margin-top:10px
+}
+
+.btn{
+    background:linear-gradient(90deg,#3b82f6,#8b5cf6);
+    color:#fff;
+    font-size: medium;
+    width: 90%;
+    margin:1.3rem auto 0;
+    padding:10px 14px;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(99,102,241,0.12);
+    transition:all 0.3s;
+    display:block;
+    text-align:center;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(99,102,241,0.2)
+}

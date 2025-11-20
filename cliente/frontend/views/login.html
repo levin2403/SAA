@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login — Gestor</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/login.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
@@ -15,18 +15,15 @@
         <div class="logo-icon">GT</div>
         <h1>AttendanceHub</h1>
       </div>
-      <p class="muted">Sistema de Control de Asistencias - Prototipo</p>
+      <p class="muted">Sistema de Control de Asistencias</p>
       <form id="loginForm">
-        <label>ID de Usuario</label>
+        <label for="loginId">ID de Usuario</label>
         <input id="loginId" maxlength="11" placeholder="1234567890" />
-        <label>Contraseña</label>
+        <label for="loginPass">Contraseña</label>
         <input id="loginPass" type="password" placeholder="tu contraseña" />
         <div id="loginError" class="login-error" aria-live="polite"></div>
         <button type="submit" class="btn">Iniciar Sesión</button>
       </form>
-      <div class="demo-credentials">
-        <strong>Demo:</strong> Alumno 1234567890 / alumno123 · Maestro 0987654321 / maestro123
-      </div>
     </div>
   </main>
   <script src="../controllers/login.controller.js" type="module"></script>

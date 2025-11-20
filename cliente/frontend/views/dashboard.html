@@ -3,9 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Dashboard — Gestor</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
   <div class="app">
@@ -62,89 +66,8 @@
       </div>
     </div>
   </div>
-
+  <!--
   <script src="screens.js"></script>
-  <script>
-    const user = window.SCREENS.getUserFromStorage()
-    if(!user){ window.location.href='login.html' }
-
-    document.getElementById('welcomeTitle').textContent = `Bienvenido, ${user.name}`
-    document.getElementById('todayDate').textContent = new Date().toLocaleString()
-
-    const classes = user.type === 'student' ? window.SCREENS.studentClasses : window.SCREENS.teacherClasses
-    const container = document.getElementById('cardsContainer')
-    const menuToggle = document.getElementById('menuToggle')
-
-    // Mobile menu toggle (nota: sidebar fue removido)
-    // menuToggle.addEventListener('click', ()=> sidebar.classList.toggle('open'))
-
-    // Navegación mejorada
-    function navigateTo(page){
-      if(page !== '#'){
-        setTimeout(() => window.location.href = page, 100)
-      }
-    }
-
-    classes.forEach((c, idx)=>{
-      const card = document.createElement('div'); card.className='card'
-      const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
-      const headClass = gradientClasses[idx % gradientClasses.length]
-      card.innerHTML = `
-        <div class="card-head ${headClass}">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
-          <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
-        </div>
-        <div class="card-body">
-          <div style="margin-bottom:8px;color:#6b7280">${c.schedule}</div>
-          <div style="margin-bottom:12px;color:#6b7280">${user.type === 'student' ? (c.teacher||'') : ((c.students||c.studentsList.length) + ' estudiantes')}</div>
-          <button class="action-btn">${user.type === 'student' ? 'Ver Código QR' : 'Tomar Lista'}</button>
-        </div>`
-      const btn = card.querySelector('.action-btn')
-      btn.addEventListener('click', ()=>{
-        if(user.type === 'student'){
-          document.getElementById('qrTitle').textContent = `Código QR - ${c.code}`
-          document.getElementById('qrBody').innerHTML = `<div class="qr-placeholder">QR generado para <strong>${c.code}</strong></div>`
-          document.getElementById('qrModal').classList.remove('hidden')
-        } else {
-          window.location.href = `attendance.html?classId=${c.id}`
-        }
-      })
-      container.appendChild(card)
-    })
-
-    // teacher-only nav
-    if(user.type === 'teacher'){
-      Array.from(document.querySelectorAll('.teacher-only')).forEach(el=>el.style.display='block')
-    }
-
-    // Logout confirmation modal
-    const logoutBtnTop = document.getElementById('logoutBtn-top')
-    const logoutConfirmModal = document.getElementById('logoutConfirmModal')
-    const confirmLogout = document.getElementById('confirmLogout')
-    const cancelLogout = document.getElementById('cancelLogout')
-
-    function openLogoutConfirm(){
-      logoutConfirmModal.classList.remove('hidden')
-    }
-
-    logoutBtnTop.addEventListener('click', openLogoutConfirm)
-
-    confirmLogout.addEventListener('click', ()=> {
-      window.SCREENS.logout()
-    })
-
-    cancelLogout.addEventListener('click', ()=> {
-      logoutConfirmModal.classList.add('hidden')
-    })
-
-    logoutConfirmModal.addEventListener('click', (e)=>{
-      if(e.target === logoutConfirmModal){
-        logoutConfirmModal.classList.add('hidden')
-      }
-    })
-
-    document.getElementById('closeQr').addEventListener('click', ()=> document.getElementById('qrModal').classList.add('hidden'))
-    document.getElementById('nav-reportes-top').addEventListener('click', ()=> window.location.href='reports.html')
-  </script>
+  -->
 </body>
 </html>
