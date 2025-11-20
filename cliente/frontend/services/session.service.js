@@ -30,8 +30,7 @@ export default class  SessionService {
   async login(id, password){
     try 
     {
-      const response = await this.api.post('/login/',
-        {
+      const response = await this.api.post('/login/', {
           id: id,
           password: password
         }

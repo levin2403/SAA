@@ -1,25 +1,24 @@
 import UsersService from '../services/session.service.js';
 
 const api = new UsersService();
-const $form = $('#loginForm')
 const $err = $('#loginError')
 
 
-$(".btn").click( async(e) => {
+$(".btn").click( async (e) => {
     
     // Prevent form submission
     e.preventDefault()
     
-    $err.text('')
+    $err.text('') // hide the error text
 
-    // CHANGED: Using jQuery .val() method instead of .value property
-    // jQuery equivalent: .val() replaces .value
+
+    // retrives login and validate content (11 digits and no letters)
     const id = ($('#loginId').val() || '').trim().replace(/\D/g,'')
     const pass = $('#loginPass').val() || ''
 
     //validate if all fields are filled
     if(!id || !pass){
-        $err.text('Complete todos los canpos antes de continuar')
+        $err.text('Complete todos los campos antes de continuar')
         $err.show()
         return 
     }
@@ -35,13 +34,15 @@ $(".btn").click( async(e) => {
     try{
         const userInfo = await api.login(id, pass);
         console.log(userInfo);
+
+        localStorage.setItem("user", userInfo.user); //set the user
+        localStorage.setItem("tokens", userInfo.tokens); //set the tokens
+
+        window.location.replace('dashboard.html') // redirect the user
     }
     catch(error){
         $err.text(error.message)
         $err.show()
     }
 
-    //const user = { id, name: u.name, type: u.type }
-    //window.SCREENS.saveUserToStorage(user)
-    //window.location.href = '../views/dashboard.html' // redirect the user
 })
