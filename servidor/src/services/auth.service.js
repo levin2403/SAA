@@ -50,7 +50,7 @@ async function authenticateUser(userId, password) {
 // Verify required fields
 function validateInputFields(userId, password) {
   if (!userId || !password) {
-    throw new Error('Missing required fields: userId and password');
+    throw new Error('Ingrese todos los campos antes de continuar');
   }
 }
 
@@ -61,7 +61,7 @@ async function findSessionByUserId(userId){
       return session;
   }
   catch(error){
-      throw new Error("No se pudo refrescar el token de acceso");
+      throw new Error("Error al iniciar sesion, intente de nuevo");
   }
 }
 
