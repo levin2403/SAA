@@ -43,7 +43,6 @@ async function authenticateUser(userId, password) {
       },
     };
   } catch (error) {
-    console.error('Authentication error:', error.message);
     throw new Error(error.message);
   }
 }
@@ -87,7 +86,7 @@ async function validateUserCredentials(userId, password)
       return response.user;
   }
   catch(error){
-      throw new Error(error.message);
+      throw new Error('ID o contraseña invalidos');
   }
 }
 

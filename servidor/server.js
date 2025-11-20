@@ -9,6 +9,13 @@ app.use(express.json()); // Middleware to parse JSON bodies
 
 connectDB(); //dattabase connection
 
+// CORS configuration
+app.use(require('cors')({
+  origin: '*',
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization'
+}));
+
 // Protected routes
 app.use('/', outhRouter);
 app.use('/', usersRouter);

@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login — Gestor</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
   <main style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px">
@@ -17,7 +18,7 @@
       <p class="muted">Sistema de Control de Asistencias - Prototipo</p>
       <form id="loginForm">
         <label>ID de Usuario</label>
-        <input id="loginId" maxlength="10" placeholder="1234567890" />
+        <input id="loginId" maxlength="11" placeholder="1234567890" />
         <label>Contraseña</label>
         <input id="loginPass" type="password" placeholder="tu contraseña" />
         <div id="loginError" class="login-error" aria-live="polite"></div>
@@ -28,21 +29,6 @@
       </div>
     </div>
   </main>
-  <script src="screens.js"></script>
-  <script>
-    const form = document.getElementById('loginForm')
-    const err = document.getElementById('loginError')
-    form.addEventListener('submit', function(e){
-      e.preventDefault(); err.textContent='';
-      const id = (document.getElementById('loginId').value||'').trim().replace(/\D/g,'')
-      const pass = document.getElementById('loginPass').value||''
-      if(id.length !== 10){ err.textContent='El ID debe tener 10 dígitos'; err.style.display='block'; return }
-      const u = window.SCREENS.users[id]
-      if(!u || u.password !== pass){ err.textContent='Credenciales incorrectas'; err.style.display='block'; return }
-      const user = { id, name: u.name, type: u.type }
-      window.SCREENS.saveUserToStorage(user)
-      window.location.href = 'dashboard.html'
-    })
-  </script>
+  <script src="../controllers/login.controller.js" type="module"></script>
 </body>
 </html>
