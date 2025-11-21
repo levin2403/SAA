@@ -114,3 +114,44 @@ body{
   width:100%;
   border-radius:8px;
 }
+
+
+
+.attendance-info label{
+  margin-left: 0.3rem;
+}
+
+
+#attendanceDate{
+  background:#fff;
+  padding: 10px 5px 10px 5px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(2,6,23,0.05);
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+  margin-bottom:20px;
+  border-style: solid;
+  border-width: 1.5px;
+}
+
+#attendanceDate:focus{
+  border-style: solid;
+  border-width: 2px;
+}
+
+#attendanceDate label{
+  display:block;
+  font-weight:600;
+  margin-bottom:4px;
+  font-size:14px;
+  margin-bottom: 1rem;
+}
+
+#attendanceDate input,
+#attendanceDate select{
+  width:100%;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #e5e7eb;
+}
