@@ -62,10 +62,10 @@ async function loadClasses(){
                 </div>
             `)
 
-            $('.action-btn').click( async()=>{
+            $card.find('.action-btn').on('click', async()=>{
                 if(user.rol === 'STUDENT'){
                     console.log(c._id, c.code)
-                    // await generateQr(c._id)
+                    await generateQr(c._id, c.code)  
                 } 
                 else {
                     navigateToAttendance()
@@ -93,9 +93,9 @@ async function generateQr(classId, classCode){
 
     function showQRModal(classCode){
         //show the modal
-        $('qrTitle').textContent = `Código QR - ${classCode}`
-        $('qrBody').innerHTML = ''
-        $('qrModal').classList.remove('hidden')
+        document.getElementById('qrTitle').textContent = `Código QR - ${classCode}`
+        document.getElementById('qrBody').innerHTML = ''
+        document.getElementById('qrModal').classList.remove('hidden')
     }
     
     function generateQRData(studentId, studentName, classId, classCode){
