@@ -53,6 +53,11 @@ label{
     margin-left: 0.5rem;
 }
 
+#loginId{
+    margin-bottom: 1.5rem;
+}
+
+
 .login-card input{
     width:100%;
     padding:12px 14px;
