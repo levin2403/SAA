@@ -29,48 +29,66 @@ async function loadClasses(){
         const classes = await api.getProfessorClasses(user.id);
         await loadClassCards(classes);
     }
+
+    async function loadClassCards(classes){
+        if(!classes) return //if there is no classes to load
+    
+        const $container = $('#cardsContainer')
+        const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
+
+        classes.forEach((c, idx)=>{
+            const finalDays = c.days.join(', ');
+    
+            const headClass = gradientClasses[idx % gradientClasses.length]
+            const $card = $('<div>', { class: 'card' }).html(`
+                <div class="card-head ${headClass}">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
+                    <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom:8px;color:#6b7280">${finalDays}</div>
+                    <div style="margin-bottom:8px;color:#6b7280">${c.hours}</div>
+                    <div style="margin-bottom:12px;color:#6b7280">${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}</div>
+                    <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
+                </div>
+            `)
+
+            $('.action-btn').click( async()=>{
+                if(user.rol === 'STUDENT'){
+                    console.log(c._id)
+                    // await generateQr(c._id)
+                } 
+                else {
+                    navigateToAttendance()
+                }
+            })
+            $container.append($card)
+        })
+    }
 }
 
-async function loadClassCards(classes){
-    if(!classes) return //if there is no classes to load
+async function generateQr(classId){
+    //generate the data
+    const qrData = window.SCREENS.generateQRData(user.id, user.name, c.id, c.code)
 
-    const $container = $('#cardsContainer')
-    const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
+    //show the modal
+    $('qrTitle').textContent = `Código QR - ${c.code}`
+    $('qrBody').innerHTML = ''
+    $('qrModal').classList.remove('hidden')
+                    
+    // Generar QR como imagen usando API
+    const encodedData = encodeURIComponent(qrData)
+    const img = document.createElement('img')
+    img.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedData}`
+    img.style.borderRadius = '8px'
+    img.alt = 'Código QR'
+    document.getElementById('qrBody').appendChild(img)
+}
 
-    //const days = ''
-    //classes.days.forEach(day =>{
-    //    days.append(day)
-    //})
+function navigateToAttendance(){
+    //save the globals
 
-    classes.forEach((c, idx)=>{
-        const finalDays = c.days.join(', ');
-
-        const headClass = gradientClasses[idx % gradientClasses.length]
-        const $card = $('<div>', { class: 'card' }).html(`
-            <div class="card-head ${headClass}">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
-                <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
-            </div>
-            <div class="card-body">
-                <div style="margin-bottom:8px;color:#6b7280">${finalDays}</div>
-                <div style="margin-bottom:8px;color:#6b7280">${c.hours}</div>
-                <div style="margin-bottom:12px;color:#6b7280">${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}</div>
-                <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
-            </div>
-        `)
-
-        $card.find('.action-btn').on('click', ()=>{
-            if(user.rol === 'STUDENT'){
-                $('#qrTitle').text(`Código QR - ${c.code}`)
-                $('#qrBody').html(`<div class="qr-placeholder">QR generado para <strong>${c.code}</strong></div>`)
-                $('#qrModal').removeClass('hidden')
-            } else {
-                window.location.href = `attendance.html?classId=${c.id}`
-            }
-        })
-
-        $container.append($card)
-    })
+    window.location.href = 'attendance.html'
 }
 
 async function handleLogout() {
