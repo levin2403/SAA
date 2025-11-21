@@ -9,6 +9,11 @@ export default class UsersService {
     });
   }
 
+  /**
+   * REST Client to retrive the classes that a user belongs to.
+   * @param {String} studentId Studen identifier.
+   * @returns Array with the student classes.
+   */
   async getStudentClasses(studentId) 
   {
     try{
@@ -18,21 +23,26 @@ export default class UsersService {
         }
       })
       return response.data.classes
-
     }catch(error){
       const errorMessage = error.response?.data;
       throw new Error(errorMessage || 'Error al obtener las clases');
     }
   }
 
+  /**
+   * REST Client to retrive the classes that a professor belongs to.
+   * @param {String} professorId Professor identifier.
+   * @returns Array with the classes that the professor imparts.
+   */
   async getProfessorClasses(professorId) 
   {
     try{
-      return this.api.get('/professor/classes/', {
+      const response = await this.api.get('/professor/classes/', {
         params: {
           professor_id: professorId
         }
       })
+      return response.data.classes
     }catch(error){
       const errorMessage = error.response?.data;
       throw new Error(errorMessage || 'Error al obtener las clases');
