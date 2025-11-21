@@ -37,7 +37,14 @@ async function loadClassCards(classes){
     const $container = $('#cardsContainer')
     const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
 
+    //const days = ''
+    //classes.days.forEach(day =>{
+    //    days.append(day)
+    //})
+
     classes.forEach((c, idx)=>{
+        const finalDays = c.days.join(', ');
+
         const headClass = gradientClasses[idx % gradientClasses.length]
         const $card = $('<div>', { class: 'card' }).html(`
             <div class="card-head ${headClass}">
@@ -45,8 +52,9 @@ async function loadClassCards(classes){
                 <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
             </div>
             <div class="card-body">
-                <div style="margin-bottom:8px;color:#6b7280">${c.schedule}</div>
-                <div style="margin-bottom:12px;color:#6b7280">${user.type === 'STUDENT' ? (c.teacher.name||'') : ((c.students||c.studentCount) + ' estudiantes')}</div>
+                <div style="margin-bottom:8px;color:#6b7280">${finalDays}</div>
+                <div style="margin-bottom:8px;color:#6b7280">${c.hours}</div>
+                <div style="margin-bottom:12px;color:#6b7280">${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}</div>
                 <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
             </div>
         `)
