@@ -9,15 +9,24 @@ const tokens = JSON.parse(localStorage.getItem('tokens'));
 // initial validation if user is loged
 if(!user){ window.location.replace('login.html') }
 
+/**
+ * init function.
+ */
 $(async function(){
-    setHeaderInfo();
-    await loadClasses();
-
+    setHeaderInfo()
+    setReportsButton()
+    await loadClasses()
 })
 
 function setHeaderInfo(){
     $('#welcomeTitle').text(`Bienvenido, ${user.name}`)
     $('#welcomeMsg').text('Panel de control - ' + new Date().toLocaleString().split(',')[0])
+}
+
+function setReportsButton(){
+    if(user.rol === 'PROFESSOR'){
+        Array.from(document.querySelectorAll('.teacher-only')).forEach(el=>el.style.display='block')
+    }
 }
 
 async function loadClasses(){
