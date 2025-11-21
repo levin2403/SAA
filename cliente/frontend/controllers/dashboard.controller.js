@@ -64,7 +64,7 @@ async function loadClasses(){
 
             $('.action-btn').click( async()=>{
                 if(user.rol === 'STUDENT'){
-                    console.log(c._id)
+                    console.log(c._id, c.code)
                     // await generateQr(c._id)
                 } 
                 else {
@@ -76,15 +76,13 @@ async function loadClasses(){
     }
 }
 
-async function generateQr(classId){
-    //generate the data
-    const qrData = window.SCREENS.generateQRData(user.id, user.name, c.id, c.code)
+async function generateQr(classId, classCode){
 
-    //show the modal
-    $('qrTitle').textContent = `Código QR - ${c.code}`
-    $('qrBody').innerHTML = ''
-    $('qrModal').classList.remove('hidden')
-                    
+    showQRModal(classCode)
+
+    //generate the data
+    const qrData = generateQRData(user.id, user.name, classId, classCode)
+
     // Generar QR como imagen usando API
     const encodedData = encodeURIComponent(qrData)
     const img = document.createElement('img')
@@ -92,7 +90,26 @@ async function generateQr(classId){
     img.style.borderRadius = '8px'
     img.alt = 'Código QR'
     document.getElementById('qrBody').appendChild(img)
+
+    function showQRModal(classCode){
+        //show the modal
+        $('qrTitle').textContent = `Código QR - ${classCode}`
+        $('qrBody').innerHTML = ''
+        $('qrModal').classList.remove('hidden')
+    }
+    
+    function generateQRData(studentId, studentName, classId, classCode){
+        return JSON.stringify({
+          type: 'attendance_qr',
+          studentId: studentId,
+          studentName: studentName,
+          classId: classId,
+          classCode: classCode,
+          timestamp: new Date().toISOString()
+        })
+    }
 }
+
 
 function navigateToAttendance(){
     //save the globals
