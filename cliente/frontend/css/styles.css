@@ -24,7 +24,7 @@ body{background:#f3f6fb;color:#111827}
 
 /* Buttons - gradientes y outline */
 .btn{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:#fff;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(99,102,241,0.12);transition:all 0.3s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,0.2)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,0.2)}  
 .btn.outline{background:transparent;border:1px solid #e6eefc;color:#0f172a}
 .btn.outline:hover{background:#f1f5f9}
 .btn.danger{background:linear-gradient(90deg,#ef4444,#dc2626);color:#fff}

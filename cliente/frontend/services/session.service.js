@@ -22,9 +22,11 @@ export default class  SessionService {
   }
 
   /**
+   * REST Client to log in a user and bring his information
+   * (id, rol, name and tokens).
    * 
-   * @param {String} id 
-   * @param {String} password 
+   * @param {String} id identificator of the user.
+   * @param {String} password password of the user.
    * @returns 
    */
   async login(id, password){
@@ -41,7 +43,7 @@ export default class  SessionService {
     catch (error)
     {
       const errorMessage = error.response?.data;
-      throw new Error(errorMessage);
+      throw new Error(errorMessage || 'Error al iniciar sesion intente de nuevo');
     }
   }
 
@@ -56,12 +58,25 @@ export default class  SessionService {
   }
 
   /**
+   * REST Client to close a session in the server.
    * 
-   * @param {*} payload 
-   * @param {*} config 
+   * @param {String} id identificator of the user.
+   * @param {*} refreshToken refresh token of the session.
    * @returns 
    */
-  singleDeviceLogout(payload, config = {}){
-    return this.api.delete('/single_logout', { ...config, data: payload }).then(res => res.data);
+  async singleDeviceLogout(id, refreshToken)
+  {
+    try{
+        return await this.api.delete('/single_logout/', {
+          data: { 
+            id: id,
+            refresh_token: refreshToken
+          }
+        });
+    }
+    catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al intentar cerrar sesion intente de nuevo');
+    }
   }
 }

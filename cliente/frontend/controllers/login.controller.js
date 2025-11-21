@@ -3,6 +3,10 @@ import UsersService from '../services/session.service.js';
 const api = new UsersService();
 const $err = $('#loginError')
 
+// initial validation if user is loged
+const user = JSON.parse(localStorage.getItem('user'));
+if(user){ window.location.replace('dashboard.html') }
+
 
 $(".btn").click( async (e) => {
     
@@ -31,18 +35,16 @@ $(".btn").click( async (e) => {
     }  
 
     // log in user
-    try{
+    try {
         const userInfo = await api.login(id, pass);
-        console.log(userInfo);
-
-        localStorage.setItem("user", userInfo.user); //set the user
-        localStorage.setItem("tokens", userInfo.tokens); //set the tokens
-
-        window.location.replace('dashboard.html') // redirect the user
-    }
-    catch(error){
-        $err.text(error.message)
-        $err.show()
-    }
-
+    
+        // Guardar objeto en localStorage
+        localStorage.setItem("user", JSON.stringify(userInfo.user));
+        localStorage.setItem("tokens", JSON.stringify(userInfo.tokens));
+    
+        window.location.replace('dashboard.html');
+    } catch (error) {
+        $err.text(error.message);
+        $err.show();
+    }    
 })

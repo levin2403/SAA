@@ -9,15 +9,36 @@ export default class UsersService {
     });
   }
 
-  getStudentClasses(params = {}, config = {}) {
-    return this.api.get('/student/classes', { ...config, params })
-      .then(res => res.data);
+  async getStudentClasses(studentId) 
+  {
+    try{
+      const response =  await this.api.get('/student/classes/', {
+        params: {
+          student_id: studentId
+        }
+      })
+      return response.data.classes
+
+    }catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al obtener las clases');
+    }
   }
 
-  getProfessorClasses(params = {}, config = {}) {
-    return this.api.get('/professor/classes', { ...config, params })
-      .then(res => res.data);
+  async getProfessorClasses(professorId) 
+  {
+    try{
+      return this.api.get('/professor/classes/', {
+        params: {
+          professor_id: professorId
+        }
+      })
+    }catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al obtener las clases');
+    }
   }
 }
+
 
 

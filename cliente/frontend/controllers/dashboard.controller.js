@@ -1,23 +1,41 @@
-const user = window.SCREENS.getUserFromStorage()
-if(!user){ window.location.href='login.html' }
+import UsersService from '../services/users.service.js';
+import SessionService from '../services/session.service.js'
 
-$(function(){
+const api = new UsersService();
+const sessionApi = new SessionService();
+const user = JSON.parse(localStorage.getItem('user'));
+const tokens = JSON.parse(localStorage.getItem('tokens'));
+
+// initial validation if user is loged
+if(!user){ window.location.replace('login.html') }
+
+$(async function(){
+    setHeaderInfo();
+    await loadClasses();
+
+})
+
+function setHeaderInfo(){
     $('#welcomeTitle').text(`Bienvenido, ${user.name}`)
-    $('#todayDate').text(new Date().toLocaleString())
+    $('#welcomeMsg').text('Panel de control - ' + new Date().toLocaleString().split(',')[0])
+}
 
-    const classes = user.type === 'student' ? window.SCREENS.studentClasses : window.SCREENS.teacherClasses
+async function loadClasses(){
+    if(user.rol === 'STUDENT'){
+        const classes = await api.getStudentClasses(user.id);
+        await loadClassCards(classes);    
+    }
+    else{
+        const classes = await api.getProfessorClasses(user.id);
+        await loadClassCards(classes);
+    }
+}
+
+async function loadClassCards(classes){
+    if(!classes) return //if there is no classes to load
+
     const $container = $('#cardsContainer')
     const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
-
-    // Mobile menu toggle (nota: sidebar fue removido)
-    // $('#menuToggle').on('click', ()=> sidebar.toggleClass('open'))
-
-    // Navegación mejorada
-    function navigateTo(page){
-        if(page !== '#'){
-            setTimeout(() => window.location.href = page, 100)
-        }
-    }
 
     classes.forEach((c, idx)=>{
         const headClass = gradientClasses[idx % gradientClasses.length]
@@ -28,13 +46,13 @@ $(function(){
             </div>
             <div class="card-body">
                 <div style="margin-bottom:8px;color:#6b7280">${c.schedule}</div>
-                <div style="margin-bottom:12px;color:#6b7280">${user.type === 'student' ? (c.teacher||'') : ((c.students||c.studentsList.length) + ' estudiantes')}</div>
-                <button class="action-btn">${user.type === 'student' ? 'Ver Código QR' : 'Tomar Lista'}</button>
+                <div style="margin-bottom:12px;color:#6b7280">${user.type === 'STUDENT' ? (c.teacher.name||'') : ((c.students||c.studentCount) + ' estudiantes')}</div>
+                <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
             </div>
         `)
 
         $card.find('.action-btn').on('click', ()=>{
-            if(user.type === 'student'){
+            if(user.rol === 'STUDENT'){
                 $('#qrTitle').text(`Código QR - ${c.code}`)
                 $('#qrBody').html(`<div class="qr-placeholder">QR generado para <strong>${c.code}</strong></div>`)
                 $('#qrModal').removeClass('hidden')
@@ -45,15 +63,23 @@ $(function(){
 
         $container.append($card)
     })
+}
 
-    // teacher-only nav
-    if(user.type === 'teacher'){
-        $('.teacher-only').css('display', 'block')
+async function handleLogout() {
+    try{
+        const id = user.id
+        const refreshToken = tokens.refresh
+        await sessionApi.singleDeviceLogout(id, refreshToken);
+
+        window.location.replace('login.html')
+
+        localStorage.removeItem('user')
+        localStorage.removeItem('tokens')
     }
-
-})
-
-
+    catch(error){
+        console.log(error)
+    }
+}
 
 // ========= MODALS SECTION ==============
 
@@ -68,8 +94,9 @@ function openLogoutConfirm(){
 
 $logoutBtnTop.on('click', openLogoutConfirm)
 
-$confirmLogout.on('click', ()=> {
-    window.SCREENS.logout()
+$confirmLogout.on('click', async ()=> {
+    console.log('si me aplastaron we')
+    await handleLogout()
 })
 
 $cancelLogout.on('click', ()=> {
@@ -83,4 +110,4 @@ $logoutConfirmModal.on('click', (e)=>{
 })
 
 $('#closeQr').on('click', ()=> $('#qrModal').addClass('hidden'))
-    $('#nav-reportes-top').on('click', ()=> window.location.href='reports.html')
+$('#nav-reportes-top').on('click', ()=> window.location.href='reports.html')
