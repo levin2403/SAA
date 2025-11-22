@@ -1,12 +1,12 @@
-import UsersService from '../services/users.service.js';
+import UsersService from '../services/users.service.js'
 import SessionService from '../services/session.service.js'
 
-const api = new UsersService();
-const sessionApi = new SessionService();
+const api = new UsersService()
+const sessionApi = new SessionService()
 const user = JSON.parse(localStorage.getItem('user'));
 const tokens = JSON.parse(localStorage.getItem('tokens'));
 
-// initial validation if user is loged
+// initial validation to know if user is loged
 if(!user){ window.location.replace('login.html') }
 
 /**
@@ -15,7 +15,9 @@ if(!user){ window.location.replace('login.html') }
 $(async function(){
     setHeaderInfo()
     setReportsButton()
-    await loadClasses()
+    const classes = await getClasses()
+    await loadClasses(classes)
+    saveClassesGlobal(classes);
 })
 
 function setHeaderInfo(){
@@ -29,51 +31,55 @@ function setReportsButton(){
     }
 }
 
-async function loadClasses(){
+function saveClassesGlobal(classes){
+    sessionStorage.setItem('classes', JSON.stringify(classes));
+}
+
+async function getClasses(){
     if(user.rol === 'STUDENT'){
         const classes = await api.getStudentClasses(user.id);
-        await loadClassCards(classes);    
+        return classes
     }
     else{
         const classes = await api.getProfessorClasses(user.id);
-        await loadClassCards(classes);
+        return classes
     }
+}
 
-    async function loadClassCards(classes){
-        if(!classes) return //if there is no classes to load
+async function loadClasses(classes){
+    if(!classes) return //if there is no classes to load
     
-        const $container = $('#cardsContainer')
-        const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
+    const $container = $('#cardsContainer')
+    const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
 
-        classes.forEach((c, idx)=>{
-            const finalDays = c.days.join(', ');
+    classes.forEach((c, idx)=>{
+        const finalDays = c.days.join(', ');
     
-            const headClass = gradientClasses[idx % gradientClasses.length]
-            const $card = $('<div>', { class: 'card' }).html(`
-                <div class="card-head ${headClass}">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
-                    <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
-                </div>
-                <div class="card-body">
-                    <div style="margin-bottom:8px;color:#6b7280">${finalDays}</div>
-                    <div style="margin-bottom:8px;color:#6b7280">${c.hours}</div>
-                    <div style="margin-bottom:12px;color:#6b7280">${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}</div>
-                    <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
-                </div>
-            `)
+        const headClass = gradientClasses[idx % gradientClasses.length]
+        const $card = $('<div>', { class: 'card' }).html(`
+            <div class="card-head ${headClass}">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
+                <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
+            </div>
+            <div class="card-body">
+                <div style="margin-bottom:8px;color:#6b7280">${finalDays}</div>
+                <div style="margin-bottom:8px;color:#6b7280">${c.hours}</div>
+                <div style="margin-bottom:12px;color:#6b7280">${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}</div>
+                <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
+            </div>
+        `)
 
-            $card.find('.action-btn').on('click', async()=>{
-                if(user.rol === 'STUDENT'){
-                    console.log(c._id, c.code)
-                    await generateQr(c._id, c.code)  
-                } 
-                else {
-                    navigateToAttendance()
-                }
-            })
-            $container.append($card)
+        $card.find('.action-btn').on('click', async()=>{
+        if(user.rol === 'STUDENT'){
+            console.log(c._id, c.code)
+                await generateQr(c._id, c.code)  
+            } 
+            else {
+                navigateToAttendance(c)
+            }
         })
-    }
+        $container.append($card)
+    })
 }
 
 async function generateQr(classId, classCode){
@@ -111,9 +117,14 @@ async function generateQr(classId, classCode){
 }
 
 
-function navigateToAttendance(){
-    //save the globals
+function navigateToAttendance(theClass){
+    //delete last selected class if exist
+    const lastSelectedClass = sessionStorage.getItem('selectedClass')
+    if(lastSelectedClass) sessionStorage.removeItem('selectedClass');
 
+    //save the global
+    sessionStorage.setItem('selectedClass', JSON.stringify(theClass));
+    //navigate to the attendences screen-
     window.location.href = 'attendance.html'
 }
 

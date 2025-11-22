@@ -1,20 +1,34 @@
 import axios from 'https://cdn.jsdelivr.net/npm/axios@1.6.0/+esm';
 
 export default class  ClassSessionService {
+  
   constructor(baseURL = 'http://localhost:3001'){
     this.api = axios.create({
       baseURL,
       timeout: 15000,
       headers: { 'Content-Type': 'application/json' }
-    });
+    });  
   }
 
   /**
    * GET /class/session
    * @param {{ class_id: string, professor_id: string, date: string }} params
    */
-  getClassSession(params = {}, config = {}){
-    return this.api.get('/class/session', { ...config, params }).then(res => res.data);
+  async getClassSession(classId, professorId, date){
+    try{
+      console.log(classId, professorId, date)
+      const response =  await this.api.get('/class/session/', {
+        params: {
+          class_id: classId,
+          professor_id: professorId,
+          date: date
+        }
+      })
+      return response.data
+    }catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al obtener las clases');
+    }
   }
 
   /**
@@ -33,6 +47,4 @@ export default class  ClassSessionService {
     return this.api.get('/attendances/dates', { ...config, params }).then(res => res.data);
   }
 }
-
-module.exports = new ClassSessionService();
 

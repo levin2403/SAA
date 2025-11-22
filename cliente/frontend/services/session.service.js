@@ -37,7 +37,6 @@ export default class  SessionService {
           password: password
         }
       );
-      console.log(response.data);
       return response.data; 
     } 
     catch (error)

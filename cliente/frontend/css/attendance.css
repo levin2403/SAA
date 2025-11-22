@@ -66,9 +66,9 @@ body{
 .attendance-info{
   margin-bottom:12px;
   color:#6b7280;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:8px;
+  display:flex;
+  flex-direction:column-reverse;
+  gap:2rem;
 }
 
 .attendance-students{
@@ -129,10 +129,9 @@ body{
   box-shadow:0 2px 8px rgba(2,6,23,0.05);
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:12px;
-  margin-bottom:20px;
   border-style: solid;
   border-width: 1.5px;
+  margin-top: 0.3rem;
 }
 
 #attendanceDate:focus{
@@ -154,4 +153,28 @@ body{
   padding:8px 12px;
   border-radius:8px;
   border:1px solid #e5e7eb;
+}
+
+.tittle-group{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0px 1rem 0px; 
+}
+
+.date-group{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.schedule-info{
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+}
+
+span{
+  margin-bottom: 0.3rem;
 }
