@@ -46,14 +46,11 @@ async function getClassSession(classId, professorId, date){
 async function createNewClassSession(classId, professorId, date) {
     try{
         //get the days that the class is imparted
-        const days = await getProfessorDayClasses(classId);
-        console.log(days)
+        const days = await getProfessorDayClasses(classId); 
 
         //verify if the session to create is in a valid day
         const dayVerification = await verifyDayOfCreationIsValid(days.days);
-        console.log(dayVerification)
         if(!dayVerification){
-            console.log('voy a retornar el nulo')
             return null;
         }
 
@@ -94,8 +91,6 @@ async function getProfessorDayClasses(classId){
 async function verifyDayOfCreationIsValid(days) {
 
     const currentDay = new Date().getDay();
-
-    console.log(currentDay)
 
     const daysNames = {
         "Lunes": 1,

@@ -11,7 +11,6 @@ if(!selectedClass)  window.location.replace('dashboard.html') // return to dashb
 
 $(async ()=>{
   setInitialScreenInfo()
-  //render();
 })
 
 function setInitialScreenInfo() {
@@ -37,8 +36,7 @@ async function handleAttendanceLoading(){
     const formatedDate = selectedDate.toISOString();
     
     const retrivedSession = await classSession.getClassSession(classId, professorId, formatedDate)
-    console.log(retrivedSession)
-    //loadAttendanceInTable();
+    await loadAttendanceInTable(retrivedSession.attendances); // load the attendances
   }
   catch(error){
     showNotification(error.message, 'error')
@@ -46,19 +44,23 @@ async function handleAttendanceLoading(){
 }
 
 async function loadAttendanceInTable(attendance){
-$container = $('attendanceStudents')
-$container.innerHTML = (cls.studentsList||[]).map((s,i)=>`
-    <div class="student-item">
+const $container = $('#attendanceStudents')
+
+attendance.forEach(student => {
+  const $studentItem = $('<div>', {class: 'student-item'}).html(
+    `
     <div>
-      <strong>${s.name || s}</strong>
-        <div style="color:#6b7280;font-size:12px">ID: ${s.id || '200'+(i+1)}</div>
+      <strong>${student.name}</strong>
+      <div style="color:#6b7280;font-size:12px">ID: ${student.id}</div>
     </div>
     <label>
-      <input type="checkbox" data-idx="${i}" data-student-id="${s.id || '200'+(i+1)}" class="student-checkbox" checked /> 
-        Presente
+      <input type="checkbox"  class="student-checkbox" ${student.status === 'ABSENT' ? '' : 'checked'}/> 
+      Presente
     </label>
-  </div>
-`).join('')
+    `
+  )
+  $container.append($studentItem)
+  })
 }
 
 let qrReaderActive = false

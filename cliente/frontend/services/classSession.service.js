@@ -16,7 +16,6 @@ export default class  ClassSessionService {
    */
   async getClassSession(classId, professorId, date){
     try{
-      console.log(classId, professorId, date)
       const response =  await this.api.get('/class/session/', {
         params: {
           class_id: classId,
