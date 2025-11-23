@@ -2,7 +2,6 @@ import UsersService from '../services/session.service.js';
 
 const api = new UsersService();
 const $err = $('#loginError')
-
 // initial validation if user is loged
 const user = JSON.parse(localStorage.getItem('user'));
 if(user){ window.location.replace('dashboard.html') }

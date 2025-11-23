@@ -1,6 +1,13 @@
 const classSessionReposistory = require('../repositories/classSession.repository');
 const userService = require('../integration/user.service');
 
+/**
+ * 
+ * @param {String} classId
+ * @param {String} professorId
+ * @param {String} date
+ * @returns 
+ */
 exports.getClassSession = async(classId, professorId, date) => 
 {
     try{
@@ -49,11 +56,11 @@ async function createNewClassSession(classId, professorId, date) {
         const days = await getProfessorDayClasses(classId); 
 
         //verify if the session to create is in a valid day
-        const dayVerification = await verifyDayOfCreationIsValid(days.days);
+        const dayVerification = await verifyDayOfCreationIsValid(days.days, date);
         if(!dayVerification){
             return null;
         }
-
+        
         const classStudents = await getStudentsInClass(classId);
 
         //creating a new session
@@ -88,25 +95,27 @@ async function getProfessorDayClasses(classId){
  * @param {Array} days Strings array with the names of the 
  * days that the professor imparts the class. 
  */
-async function verifyDayOfCreationIsValid(days) {
-
-    const currentDay = new Date().getDay();
+async function verifyDayOfCreationIsValid(days, dateString) {
+    const dayToCreate = new Date(dateString);
+    dayToCreate.setUTCHours(14, 0, 0, 0);
 
     const daysNames = {
         "Lunes": 1,
-        "Martes": 2,
+        "Martes": 2,  
         "Miercoles": 3,
         "Jueves": 4,
         "Viernes": 5,
         "Sabado": 6,
-        "Domingo": 7
+        "Domingo": 0
     };
 
     return days.some(day => {
         const dayNumber = daysNames[day];
-        return dayNumber === currentDay;
+        return dayNumber === dayToCreate.getDay();
     });
 }
+
+
 
 /**
  * 

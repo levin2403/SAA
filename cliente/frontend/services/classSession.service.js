@@ -32,10 +32,22 @@ export default class  ClassSessionService {
 
   /**
    * PUT /update/attendance
-   * @param {{ class_session_id: string, attendances: Array }} payload
+   * @param {String} classSessionId 
+   * @param {String} updatedAttendance 
+   * @returns 
    */
-  updateAttendance(payload = {}, config = {}){
-    return this.api.put('/update/attendance', payload, config).then(res => res.data);
+  async updateAttendance(classSessionId, updatedAttendance){
+    try{
+      await this.api.put('/update/attendance/',
+       {
+          class_session_id: classSessionId,
+          attendances: updatedAttendance
+        }
+      )
+    }catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al guardar las asistencias, intente de nuevo');
+    }
   }
 
   /**
