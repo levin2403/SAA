@@ -4,7 +4,8 @@ const classSession = new ClassSessionService()
 const user = JSON.parse(localStorage.getItem('user'))
 const selectedClass = JSON.parse(sessionStorage.getItem('selectedClass'))
 let currentSessionId = ''
-let currentSessionAttendances = {}
+let currentSessionAttendances = []
+let currentSessionDate = ""
 
 //initial validation
 if(!user) window.location.replace('login.html') // return to login
@@ -21,17 +22,11 @@ $(async ()=>{
  */
 function setInitialScreenInfo() {
   // Obtener fecha de hoy en formato YYYY-MM-DD
-  const today = new Date().toISOString().split('T')[0];
-  //const day = today.getDayOfTheMont
-  //const month = today.getDay
-  //const year = today.getFullYear
-
-  //const realTime = (`${year} - ${month} - ${day}`)
-  //today.setMinutes(today.getMinutes() + today.getTimezoneOffset())
-  //const realDate = today.toISOString().split('T')[0];
+  const today = new Date();
+  const localDate = today.toLocaleDateString('en-CA') // 'en-CA' da el formato: YYYY-MM-DD
 
   // Colocarla en el input
-  $('#attendanceDate').val(today);
+  $('#attendanceDate').val(localDate);
 
   $('#attendanceTitle').text(`Toma de lista: ${selectedClass.name} ${selectedClass.code}`);
 
@@ -58,7 +53,8 @@ async function handleAttendanceLoading(){
     const retrivedSession = await classSession.getClassSession(classId, professorId, strDate)
     await validateIfSessionEmpty(retrivedSession)
     currentSessionId = retrivedSession._id // sets the current session with the retrived session.
-    currentSessionAttendances = currentSessionAttendances.attendances // set the attendances for validation
+    currentSessionAttendances = retrivedSession.attendances // set the attendances for validation
+    currentSessionDate = retrivedSession.date
     await loadAttendanceInTable(retrivedSession.attendances); // load the attendances.
   }
   catch(error){
@@ -91,23 +87,23 @@ function emptyStudentsContainer(){
  * @param {Array<Object>} attendance - Array of student attendance objects with id, name, and status properties
  */
 async function loadAttendanceInTable(attendance){
-const $container = $('#attendanceStudents')
-emptyStudentsContainer() //empty the container
-attendance.forEach(student => {
-  const $studentItem = $('<div>', { class: 'student-item', 'data-id': student.id }).html(
-    `
-    <div>
-      <strong>${student.name}</strong>
-      <div style="color:#6b7280;font-size:12px">ID: ${student.id}</div>
-    </div>
-    <label>
-      <input type="checkbox"  class="student-checkbox" ${student.status === 'ABSENT' ? '' : 'checked'}/> 
-      Presente
-    </label>
-    `
-  )
-  $container.append($studentItem)
-  })
+  const $container = $('#attendanceStudents')
+  emptyStudentsContainer() //empty the container
+  attendance.forEach(student => {
+    const $studentItem = $('<div>', { class: 'student-item', 'data-id': student.id }).html(
+      `
+      <div>
+        <strong>${student.name}</strong>
+        <div style="color:#6b7280;font-size:12px">ID: ${student.id}</div>
+      </div>
+      <label>
+        <input type="checkbox"  class="student-checkbox" ${student.status === 'ABSENT' ? '' : 'checked'}/> 
+        Presente
+      </label>
+      `
+    )
+    $container.append($studentItem)
+    })
 }
 
 /**
@@ -133,22 +129,12 @@ function getAttendancesFromContainer() {
   return result.length === 0 ? null : result;
 }
 
-/**
- * Retrieves a specific student card by their ID from the attendance table.
- * @param {string} studentId - The ID of the student to retrieve
- * @returns {Object|null} Object containing student id, name, and status, or null if not found
- */
-function getCardById(studentId) {
-  const $card = $('#attendanceStudents .student-item[data-id="' + studentId + '"]');
-
-  if ($card.length === 0) return null;
-
-  return {
-    id: $card.data('id'),
-    name: $card.find('strong').text(),
-    status: $card.find('.student-checkbox').is(':checked') ? 'PRESENT' : 'ABSENT'
-  };
+function isStudentsContainerEmpty(){
+  if ($('#attendanceStudents').children().length === 0) {
+    return true
+  }
 }
+
 
 let qrReaderActive = false
 let qrScanner = null
@@ -176,6 +162,10 @@ closeQRBtn.addEventListener('click', ()=>{
  * Handles camera access errors and displays appropriate error messages.
  */
 function startQRReader(){
+  if(isStudentsContainerEmpty()){
+    showNotification('Selecciona una sesion antes de activar el lector', 'error');
+    return
+  }
   qrReaderActive = true
   qrSection.classList.remove('hidden')
   closeQRBtn.style.display = 'block'
@@ -234,44 +224,6 @@ function stopQRReader(){
   }
 }
 
-let isProcessingQrReadding = false
-
-/**
- * Handles successful QR code scan events.
- * Parses the QR data, validates it, and marks the corresponding student as present.
- * @param {string} decodedText - The decoded text from the QR code
- * @param {Object} decodedResult - The full decoded result object from the QR scanner
- */
-function onScanSuccess(decodedText, decodedResult){
-  console.log('Qr escaneado')
-  const qrData = JSON.parse(decodedText)
-
-  if(!isProcessingQrReadding){
-    const qrData = JSON.parse(decodedText)
-    handleSuccesfullScannReading(console.log(qrData))
-  }
-    
-}
-
-async function handleSuccesfullScannReading(qrData){
-  isProcessingQrReadding = true //set the state of this function as ocuppied
-
-  //make validations
-
-  //validate if the class
-
-
-  showNotification(`Asistencia guardada`, 'success')
-
-  setTimeout(() => {
-    isProcessingQrReadding = false // set the flag as free
-  }, 3000);
-
-  function showFailNotification(){
-    showNotification(`Asistencia guardada`, 'error')
-  }
-}
-
 /**
  * Handles QR code scan errors (e.g., when no QR code is visible).
  * Errors are silently ignored as they occur frequently during normal scanning.
@@ -282,6 +234,81 @@ function onScanError(error){
   // Se puede loguear en la consola si es necesario
 }
 
+
+let isProcessingQrReadding = false
+
+/**
+ * Handles successful QR code scan events.
+ * Parses the QR data, validates it, and marks the corresponding student as present.
+ * @param {string} decodedText - The decoded text from the QR code
+ * @param {Object} decodedResult - The full decoded result object from the QR scanner
+ */
+function onScanSuccess(decodedText, decodedResult){
+  if(!isProcessingQrReadding){
+    const qrData = JSON.parse(decodedText)
+    handleSuccesfullScannReading(qrData)
+  }
+}
+
+async function handleSuccesfullScannReading(qrData){
+  isProcessingQrReadding = true //set the state of this function as ocuppied
+
+  //make validations
+
+  //validate if the class is correct
+  if(qrData.classId !== selectedClass._id){
+    showFailNotification()
+    return 
+  }
+
+  //validate if the student is on the list
+  if(!isStudentIdInList()){
+    showFailNotification()
+    return 
+  }
+
+  //validate if the date is valid
+  if(!isDateValid()){
+    showFailNotification()
+    return 
+  }
+
+  switchStudentCardStatusById(qrData.studentId)
+
+  showNotification(`Asistencia registrada con exito`, 'success')
+
+  setTimeout(() => {
+    isProcessingQrReadding = false // set the flag as free
+  }, 2000);
+
+  function isStudentIdInList() {
+    return currentSessionAttendances.some(student => {
+      return student.id === qrData.studentId
+    })
+  }
+
+  function isDateValid(){
+    const qrDate = qrData.timestamp.split('T')[0]
+    const currentDate = currentSessionDate.split('T')[0]
+    return qrDate === currentDate
+  }
+
+  function showFailNotification(){
+    showNotification(`QR invalido`, 'error')
+  }
+}
+
+/**
+ * Retrieves a specific student card by their ID from the attendance table.
+ * @param {string} studentId - The ID of the student to retrieve
+ * @returns {Object|null} Object containing student id, name, and status, or null if not found
+ */
+function switchStudentCardStatusById(studentId) {
+  const $card = $('#attendanceStudents .student-item[data-id="' + studentId + '"]');
+  if ($card.length === 0) return;
+
+  $card.find('.student-checkbox').prop('checked', true);
+}
 
 async function handleAttendanceUpdate() {
   try{

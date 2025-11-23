@@ -140,7 +140,7 @@ async function handleLogout() {
         localStorage.removeItem('tokens')
     }
     catch(error){
-        console.log(error)
+        showNotification(error.message, 'error')
     }
 }
 
