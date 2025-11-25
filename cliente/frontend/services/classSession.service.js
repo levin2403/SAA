@@ -52,10 +52,23 @@ export default class  ClassSessionService {
 
   /**
    * GET /attendances/dates
-   * @param {{ class_id: string, professor_id: string, begining: string, end: string }} params
+   * @param {*} classId 
    */
-  getAttendancesByDates(params = {}, config = {}){
-    return this.api.get('/attendances/dates', { ...config, params }).then(res => res.data);
+  async getAttendancesByDates(classId, professorId, begining, end){
+    try{
+      const response =  await this.api.get('/attendances/dates/', {
+        params: {
+          class_id: classId,
+          professor_id: professorId,
+          begining: begining,
+          end: end
+        }
+      })
+      return response.data
+    }catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error las asistencias');      
+    }
   }
 }
 

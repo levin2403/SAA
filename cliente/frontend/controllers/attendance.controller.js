@@ -52,9 +52,13 @@ async function handleAttendanceLoading(){
     
     const retrivedSession = await classSession.getClassSession(classId, professorId, strDate)
     await validateIfSessionEmpty(retrivedSession)
+
+    showNotification('Sesion obtenida con exito', 'success')
+
     currentSessionId = retrivedSession._id // sets the current session with the retrived session.
     currentSessionAttendances = retrivedSession.attendances // set the attendances for validation
     currentSessionDate = retrivedSession.date
+    
     await loadAttendanceInTable(retrivedSession.attendances); // load the attendances.
   }
   catch(error){
@@ -254,6 +258,7 @@ async function handleSuccesfullScannReading(qrData){
   isProcessingQrReadding = true //set the state of this function as ocuppied
 
   //make validations
+  console.log(qrData)
 
   //validate if the class is correct
   if(qrData.classId !== selectedClass._id){
@@ -275,7 +280,7 @@ async function handleSuccesfullScannReading(qrData){
 
   switchStudentCardStatusById(qrData.studentId)
 
-  showNotification(`Asistencia registrada con exito`, 'success')
+  showNotification(`Asistencia registrada con exito`, 'success')   
 
   setTimeout(() => {
     isProcessingQrReadding = false // set the flag as free
@@ -288,9 +293,10 @@ async function handleSuccesfullScannReading(qrData){
   }
 
   function isDateValid(){
-    const qrDate = qrData.timestamp.split('T')[0]
+    const qrDate = new Date(qrData.timestamp)
+    const date = qrDate.toLocaleDateString('en-CA').split('T')[0]
     const currentDate = currentSessionDate.split('T')[0]
-    return qrDate === currentDate
+    return date === currentDate
   }
 
   function showFailNotification(){

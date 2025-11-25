@@ -13,7 +13,7 @@ const routeLimiter = rateLimit({
 
 router.get('/class/session', routeLimiter, classSessionController.getClassSession);
 router.put('/update/attendance', routeLimiter, classSessionController.updateAttendance);
-router.get('/attendances/dates', routeLimiter, classSessionController.getAttendancesByDates);
+router.get('/attendances/dates', routeLimiter, classSessionController.getAttendancesByDates);  
 
 
 module.exports = router;
