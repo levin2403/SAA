@@ -158,29 +158,64 @@ body{background:#f3f6fb;color:#111827}
   background:linear-gradient(135deg,#3b82f6,#2563eb)
 }
 
-/* --- ESTILOS ESPECIFICOS PARA REPORTE TIPO MATRIZ (Porque kevin me lo ordeno) --- */
-.matrix-table th, .matrix-table td {
-  text-align: center;
-  padding: 8px 4px;
+/* --- ESTILOS PARA REPORTE MATRIZ (SCROLL Y FIX) --- */
+
+.reports-table-container {
+  /* Define un tamaño máximo para activar el scroll vertical si hay muchos alumnos */
+  max-height: 70vh; /* 70% de la altura de la pantalla */
+  overflow: auto;   /* Activa scroll horizontal y vertical automáticamente */
+  position: relative;
+  background: #fff;
   border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: separate; /* Necesario para que el sticky funcione bien */
+  border-spacing: 0;
+}
+
+.matrix-table th, 
+.matrix-table td {
+  text-align: center;
+  padding: 10px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #f3f4f6;
   font-size: 0.85rem;
+  white-space: nowrap; /* Evita que las fechas se rompan en dos líneas */
 }
-.matrix-table th {
-  background-color: #f9fafb;
-  font-weight: 600;
-  white-space: nowrap;
+
+/* --- Encabezado Fijo (Sticky Top) --- */
+.matrix-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc; /* Color de fondo del encabezado */
+  z-index: 20; /* Por encima del contenido normal */
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 700;
+  color: #475569;
 }
-/* La primera columna (nombres) alineada a la izquierda y pegajosa */
-.matrix-table td:first-child, .matrix-table th:first-child {
-  text-align: left;
-  min-width: 200px;
+
+/* --- Primera Columna Fija (Sticky Left) --- */
+.matrix-table td:first-child, 
+.matrix-table th:first-child {
   position: sticky;
   left: 0;
   background-color: #fff;
-  z-index: 10;
-  border-right: 2px solid #e5e7eb;
+  z-index: 10; /* Por encima de las celdas normales, debajo del header */
+  text-align: left;
+  border-right: 2px solid #e2e8f0; /* Borde más grueso para separar */
+  min-width: 220px; /* Ancho mínimo para que quepa ID y Nombre */
 }
-.status-present { color: #10b981; font-weight: bold; } /* Verde para X */
-.status-absent { color: #ef4444; font-weight: bold; }  /* Rojo para F */
-/* Ajuste para contenedor con scroll horizontal */
-.reports-table-container { overflow-x: auto; }
+
+/* Ajuste: La celda superior izquierda (cruce de headers) debe tener más z-index */
+.matrix-table thead th:first-child {
+  z-index: 30;
+}
+
+/* Estilos de estado */
+.status-present { color: #10b981; font-weight: 800; background-color: #f0fdf4; }
+.status-absent { color: #ef4444; font-weight: 800; background-color: #fef2f2; }
+.status-none { color: #cbd5e1; }
