@@ -41,7 +41,7 @@
       <table id="reportsTable" class="matrix-table">
         <thead>
           <tr id="tableHeaderRow">
-            <th>ID / Alumno</th> </tr>
+            <th>Alumno / ID</th> </tr>
         </thead>
         <tbody id="reportsTableBody">
           <tr><td colspan="100" style="text-align:center;padding:20px;color:#6b7280">Selecciona materia y rango para visualizar.</td></tr>
@@ -174,7 +174,7 @@
       }
 
       // Header dinámico
-      let headerHTML = '<th style="text-align:left; padding-left:12px">ID / Nombre</th>';
+      let headerHTML = '<th style="text-align:left; padding-left:12px">Alumno / ID</th>';
       data.dates.forEach(dStr => {
         const datePretty = data.dateObjs[dStr].toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
         headerHTML += `<th>${datePretty}</th>`;
@@ -188,12 +188,12 @@
       data.students.forEach(st => {
         const tr = document.createElement('tr');
         
-        // COLUMNA 1: ID a la izquierda (Negritas) y Nombre abajo
+        // CAMBIO AQUÍ: Nombre arriba (bold) y ID abajo (gris)
         let rowHTML = `
           <td style="text-align:left; padding-left:12px">
             <div style="display:flex; flex-direction:column;">
-              <span style="font-weight:800; color:#1f2937; font-size:0.95rem">${st.id}</span>
-              <span style="color:#64748b; font-size:0.85rem">${st.name}</span>
+              <span style="font-weight:800; color:#1f2937; font-size:0.95rem">${st.name}</span>
+              <span style="color:#64748b; font-size:0.85rem">${st.id}</span>
             </div>
           </td>
         `;
@@ -208,11 +208,11 @@
 
           if (status === 'X') { 
             cellClass = 'status-present'; 
-            content = '✓'; // Usamos una palomita visualmente
+            content = '✓'; 
             p++; total++; 
           } else if (status === 'F') { 
             cellClass = 'status-absent'; 
-            content = '✗'; // Usamos una cruz visualmente
+            content = '✗'; 
             total++; 
           }
           
@@ -246,16 +246,15 @@
       rows.push([]); 
 
       // Header Excel
-      const headerRow = ['ID', 'Nombre del Alumno'];
+      const headerRow = ['Nombre del Alumno', 'ID'];
       data.dates.forEach(dStr => {
-        // En Excel sí ponemos la fecha completa
         headerRow.push(data.dateObjs[dStr].toLocaleDateString('es-MX'));
       });
       headerRow.push('Asistencias', 'Faltas', '%');
       rows.push(headerRow);
 
       data.students.forEach(st => {
-        const row = [st.id, st.name]; // ID y Nombre en columnas separadas para Excel
+        const row = [st.name, st.id]; // CAMBIO: Orden en Excel también
         let p = 0, f = 0;
 
         data.dates.forEach(dStr => {
