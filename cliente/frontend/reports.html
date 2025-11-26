@@ -12,7 +12,7 @@
     <div class="reports-header">
       <h2>Reportes de asistencia</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="exportCSV" class="btn">Exportar CSV</button>
+        <button id="exportCSV" class="btn">Descargar Excel</button>
         <button onclick="history.back()" class="btn outline">Volver</button>
       </div>
     </div>
@@ -21,7 +21,7 @@
       <div>
         <label for="filterClass">Materia:</label>
         <select id="filterClass">
-          <option value="">Todas las materias</option>
+          <option value="">Selecciona una materia</option>
         </select>
       </div>
       <div>
@@ -38,16 +38,14 @@
     </div>
 
     <div class="reports-table-container">
-      <table id="reportsTable">
+      <table id="reportsTable" class="matrix-table">
         <thead>
-          <tr>
-            <th>Materia</th>
-            <th>Fecha</th>
-            <th id="dateHeader"></th>
+          <tr id="tableHeaderRow">
+            <th>Alumno / Fecha</th>
           </tr>
         </thead>
         <tbody id="reportsTableBody">
-          <tr><td colspan="100" style="text-align:center;padding:20px;color:#6b7280">No hay datos disponibles</td></tr>
+          <tr><td colspan="100" style="text-align:center;padding:20px;color:#6b7280">Selecciona una materia y rango para ver la lista.</td></tr>
         </tbody>
       </table>
     </div>
@@ -59,147 +57,230 @@
 
   <script src="screens.js"></script>
   <script>
-    const user = window.SCREENS.getUserFromStorage()
-    if(!user || user.type !== 'teacher') window.location.href='login.html'
+    // --- 1. INICIALIZACIÓN Y SEGURIDAD ---
+    const user = window.SCREENS.getUserFromStorage();
+    if(!user || user.type !== 'teacher') window.location.href='login.html';
+    
+    
 
-    const classes = window.SCREENS.teacherClasses
-    const filterClassSelect = document.getElementById('filterClass')
-    const filterStartDate = document.getElementById('filterStartDate')
-    const filterEndDate = document.getElementById('filterEndDate')
-    const searchBtn = document.getElementById('searchBtn')
-    const exportCSVBtn = document.getElementById('exportCSV')
-    const reportsTable = document.getElementById('reportsTable')
-    const reportsTableBody = document.getElementById('reportsTableBody')
-    const reportsArea = document.getElementById('reportsArea')
-    const reportsStats = document.getElementById('reportsStats')
+    // Referencias DOM
+    const classes = window.SCREENS.teacherClasses;
+    const filterClassSelect = document.getElementById('filterClass');
+    const filterStartDate = document.getElementById('filterStartDate');
+    const filterEndDate = document.getElementById('filterEndDate');
+    const searchBtn = document.getElementById('searchBtn');
+    const exportCSVBtn = document.getElementById('exportCSV');
+    const tableHeaderRow = document.getElementById('tableHeaderRow');
+    const reportsTableBody = document.getElementById('reportsTableBody');
+    const reportsArea = document.getElementById('reportsArea');
+    const reportsStats = document.getElementById('reportsStats');
 
-    // Populate class filter
+    // --- 2. CONFIGURACIÓN DEL SEMESTRE ---
+    const currentYear = new Date().getFullYear();
+    const SEMESTER_START_STR = `${currentYear}-08-25`; 
+    const SEMESTER_END_STR = `${currentYear}-12-13`;
+
+    // Restringir selectores HTML
+    filterStartDate.min = SEMESTER_START_STR;
+    filterStartDate.max = SEMESTER_END_STR;
+    filterEndDate.min = SEMESTER_START_STR;
+    filterEndDate.max = SEMESTER_END_STR;
+
+    // --- 3. CARGAR DATOS INICIALES ---
+    // Llenar Materias
     classes.forEach(c => {
-      const option = document.createElement('option')
-      option.value = c.id
-      option.textContent = c.name
-      filterClassSelect.appendChild(option)
-    })
+      const option = document.createElement('option');
+      option.value = c.id;
+      option.textContent = c.name;
+      filterClassSelect.appendChild(option);
+    });
 
-    // Set default date range (last 31 days)
-    const today = new Date()
-    const thirtyOneDaysAgo = new Date(today.getTime() - (31 * 24 * 60 * 60 * 1000))
-    filterEndDate.value = window.SCREENS.formatDateForInput(today)
-    filterStartDate.value = window.SCREENS.formatDateForInput(thirtyOneDaysAgo)
-
-    function generateReport(){
-      const selectedClassId = filterClassSelect.value ? Number(filterClassSelect.value) : null
-      const startDate = new Date(filterStartDate.value)
-      const endDate = new Date(filterEndDate.value)
-
-      // Get records within date range
-      let records = window.SCREENS.getAttendanceRecordsByDateRange(startDate, endDate, selectedClassId)
-
-      if(selectedClassId){
-        records = records.filter(r => r.classId === selectedClassId)
-      }
-
-      // Generate table
-      if(records.length === 0){
-        reportsTableBody.innerHTML = '<tr><td colspan="100" style="text-align:center;padding:20px;color:#6b7280">No hay registros en este rango</td></tr>'
-        reportsArea.style.display = 'none'
-        return
-      }
-
-      // Get unique dates and generate columns
-      const uniqueDates = [...new Set(records.map(r => new Date(r.date).toLocaleDateString()))].sort()
-      
-      // Limit to 31 columns max
-      const datesToShow = uniqueDates.slice(0, 31)
-
-      // Rebuild table header
-      const thead = reportsTable.querySelector('thead tr')
-      thead.innerHTML = '<th>Materia</th><th>Fecha</th>'
-      datesToShow.forEach(date => {
-        const th = document.createElement('th')
-        th.textContent = new Date(date).toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit'})
-        th.style.minWidth = '50px'
-        th.style.textAlign = 'center'
-        thead.appendChild(th)
-      })
-
-      // Group by class and date
-      const groupedByClass = {}
-      records.forEach(r => {
-        if(!groupedByClass[r.className]) groupedByClass[r.className] = {}
-        groupedByClass[r.className][new Date(r.date).toLocaleDateString()] = r
-      })
-
-      // Generate table body
-      reportsTableBody.innerHTML = ''
-      Object.entries(groupedByClass).forEach(([className, dateMap]) => {
-        const tr = document.createElement('tr')
-        tr.innerHTML = `<td><strong>${className}</strong></td><td></td>`
-        
-        datesToShow.forEach(date => {
-          const td = document.createElement('td')
-          td.style.textAlign = 'center'
-          
-          const record = dateMap[date]
-          if(record){
-            const presentCount = record.records.filter(s => s.present).length
-            const totalCount = record.records.length
-            const percentage = Math.round((presentCount / totalCount) * 100)
-            td.innerHTML = `<strong>${presentCount}/${totalCount}</strong><br><small>${percentage}%</small>`
-            td.style.color = percentage >= 80 ? '#10b981' : percentage >= 60 ? '#f59e0b' : '#ef4444'
-          } else {
-            td.textContent = '-'
-            td.style.color = '#d1d5db'
-          }
-          tr.appendChild(td)
-        })
-        reportsTableBody.appendChild(tr)
-      })
-
-      // Show stats
-      const totalRecords = records.length
-      const totalStudents = records.reduce((sum, r) => sum + r.records.length, 0)
-      const totalPresent = records.reduce((sum, r) => sum + r.records.filter(s => s.present).length, 0)
-      const avgAttendance = Math.round((totalPresent / totalStudents) * 100)
-
-      reportsStats.innerHTML = `
-        <strong>Resumen:</strong> ${totalRecords} registro(s), 
-        ${totalStudents} asistencias totales, 
-        ${totalPresent} presente(s), 
-        Promedio: ${avgAttendance}%
-      `
-      reportsArea.style.display = 'block'
+    // Fechas por defecto inteligentes
+    const today = new Date();
+    const todayStr = window.SCREENS.formatDateForInput(today);
+    
+    if (todayStr < SEMESTER_START_STR) {
+        filterStartDate.value = SEMESTER_START_STR;
+        filterEndDate.value = SEMESTER_START_STR;
+    } else if (todayStr > SEMESTER_END_STR) {
+        filterEndDate.value = SEMESTER_END_STR;
+        const d = window.SCREENS.parseLocalYMD(SEMESTER_END_STR);
+        d.setDate(d.getDate() - 30);
+        filterStartDate.value = window.SCREENS.formatDateForInput(d);
+    } else {
+        filterEndDate.value = todayStr;
+        const d = window.SCREENS.parseLocalYMD(todayStr);
+        d.setDate(d.getDate() - 30);
+        const dStr = window.SCREENS.formatDateForInput(d);
+        filterStartDate.value = (dStr < SEMESTER_START_STR) ? SEMESTER_START_STR : dStr;
     }
 
-    searchBtn.addEventListener('click', generateReport)
+    // --- 4. LÓGICA DE PROCESAMIENTO DE DATOS (MATRIZ) ---
+    function getReportData() {
+      const sVal = filterStartDate.value;
+      const eVal = filterEndDate.value;
+      const classId = filterClassSelect.value ? Number(filterClassSelect.value) : null;
 
-    exportCSVBtn.addEventListener('click', ()=>{
-      const selectedClassId = filterClassSelect.value ? Number(filterClassSelect.value) : null
-      const startDate = new Date(filterStartDate.value)
-      const endDate = new Date(filterEndDate.value)
+      if (!sVal || !eVal) { alert("Selecciona las fechas."); return null; }
+      if (!classId) { alert("Selecciona una materia."); return null; }
 
-      let records = window.SCREENS.getAttendanceRecordsByDateRange(startDate, endDate, selectedClassId)
-      if(selectedClassId) records = records.filter(r => r.classId === selectedClassId)
+      const start = window.SCREENS.parseLocalYMD(sVal);
+      const end = window.SCREENS.parseLocalYMD(eVal);
 
-      if(records.length === 0){
-        alert('No hay registros para exportar')
-        return
+      if (start > end) { alert("La fecha de inicio es mayor a la final."); return null; }
+
+      // Validar 31 días
+      const diffDays = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
+      if (diffDays > 31) {
+        alert(`Has seleccionado ${diffDays} días. El máximo permitido es 31.`);
+        return null;
       }
 
-      const rows = [['Materia','Fecha','ID Estudiante','Nombre','Presente']]
+      // Obtener registros crudos
+      const records = window.SCREENS.getAttendanceRecordsByDateRange(sVal, eVal, classId);
+      
+      if (records.length === 0) return { empty: true };
+
+      // 1. Columnas (Fechas)
+      const dateSet = new Set();
+      const dateObjMap = {}; 
+      
       records.forEach(r => {
-        r.records.forEach(student => {
-          const studentId = student.student.id || 'N/A'
-          const studentName = student.student.name || student.student
-          rows.push([r.className, r.date, studentId, studentName, student.present ? 'Sí' : 'No'])
-        })
-      })
+        const dStr = window.SCREENS.formatDateForInput(new Date(r.date));
+        dateSet.add(dStr);
+        dateObjMap[dStr] = new Date(r.date);
+      });
+      const sortedDates = Array.from(dateSet).sort();
 
-      window.SCREENS.exportCSV(rows, 'reporte_asistencia.csv')
-    })
+      // 2. Filas (Alumnos)
+      const studentsMap = new Map();
 
-    // Load initial report
-    generateReport()
+      records.forEach(r => {
+        const dStr = window.SCREENS.formatDateForInput(new Date(r.date));
+        r.records.forEach(s => {
+          const sId = s.student.id || s.studentId || 'S/ID';
+          const sName = s.student.name || s.studentName || 'Desconocido';
+          
+          if (!studentsMap.has(sId)) {
+            studentsMap.set(sId, { id: sId, name: sName, attendance: {} });
+          }
+          // Marcar asistencia
+          const studentEntry = studentsMap.get(sId);
+          studentEntry.attendance[dStr] = s.present ? 'X' : 'F';
+        });
+      });
+
+      const studentsArray = Array.from(studentsMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+      return { empty: false, dates: sortedDates, students: studentsArray, dateObjs: dateObjMap };
+    }
+
+    // --- 5. GENERAR TABLA HTML ---
+    function generateReport() {
+      const data = getReportData();
+      if (!data) return; 
+
+      if (data.empty) {
+        tableHeaderRow.innerHTML = '<th>Estado</th>';
+        reportsTableBody.innerHTML = '<tr><td style="text-align:center;padding:20px;">No se encontraron registros.</td></tr>';
+        reportsArea.style.display = 'none';
+        return;
+      }
+
+      let headerHTML = '<th style="min-width:200px; text-align:left;">Alumno</th>';
+      data.dates.forEach(dStr => {
+        const datePretty = data.dateObjs[dStr].toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+        headerHTML += `<th>${datePretty}</th>`;
+      });
+      headerHTML += '<th>% Asist.</th>';
+      tableHeaderRow.innerHTML = headerHTML;
+
+      reportsTableBody.innerHTML = '';
+      
+      data.students.forEach(st => {
+        const tr = document.createElement('tr');
+        let rowHTML = `<td><strong>${st.name}</strong><br><small style="color:#9ca3af">${st.id}</small></td>`;
+        
+        let presentCount = 0;
+        let totalRegisteredDays = 0;
+
+        data.dates.forEach(dStr => {
+          const status = st.attendance[dStr]; 
+          let cellContent = '-';
+          let cellClass = '';
+
+          if (status === 'X') {
+            cellContent = 'X'; 
+            cellClass = 'status-present';
+            presentCount++;
+            totalRegisteredDays++;
+          } else if (status === 'F') {
+            cellContent = 'F'; 
+            cellClass = 'status-absent';
+            totalRegisteredDays++;
+          }
+          rowHTML += `<td class="${cellClass}">${cellContent}</td>`;
+        });
+
+        const percent = totalRegisteredDays > 0 ? Math.round((presentCount / totalRegisteredDays) * 100) : 0;
+        rowHTML += `<td><strong>${percent}%</strong></td>`;
+
+        tr.innerHTML = rowHTML;
+        reportsTableBody.appendChild(tr);
+      });
+
+      reportsStats.innerHTML = `Mostrando historial de <strong>${data.students.length}</strong> alumnos en <strong>${data.dates.length}</strong> sesiones.`;
+      reportsArea.style.display = 'block';
+    }
+
+    // --- 6. GENERAR CSV (EXCEL) ---
+    exportCSVBtn.addEventListener('click', () => {
+      const data = getReportData();
+      if (!data || data.empty) {
+        alert("No hay datos para exportar.");
+        return;
+      }
+
+      const className = filterClassSelect.options[filterClassSelect.selectedIndex].text;
+      const rows = [];
+
+      rows.push(['LISTA DE ASISTENCIA - SAA']);
+      rows.push(['Materia:', className]);
+      rows.push(['Desde:', filterStartDate.value, 'Hasta:', filterEndDate.value]);
+      rows.push(['Generado el:', new Date().toLocaleString()]);
+      rows.push([]); 
+
+      const headerRow = ['ID Alumno', 'Nombre Completo'];
+      data.dates.forEach(dStr => {
+        const datePretty = data.dateObjs[dStr].toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit' });
+        headerRow.push(datePretty);
+      });
+      headerRow.push('Asistencias', 'Faltas', '% Final');
+      rows.push(headerRow);
+
+      data.students.forEach(st => {
+        const row = [st.id, st.name];
+        let p = 0;
+        let f = 0;
+
+        data.dates.forEach(dStr => {
+          const status = st.attendance[dStr];
+          if (status === 'X') { row.push('X'); p++; }
+          else if (status === 'F') { row.push('F'); f++; }
+          else { row.push('-'); }
+        });
+
+        const total = p + f;
+        const percent = total > 0 ? Math.round((p/total)*100) + '%' : '0%';
+        row.push(p, f, percent);
+        rows.push(row);
+      });
+
+      const cleanName = className.replace(/[^a-z0-9]/gi, '_');
+      window.SCREENS.exportCSV(rows, `Lista_${cleanName}_${filterStartDate.value}.csv`);
+    });
+
+    searchBtn.addEventListener('click', generateReport);
   </script>
 </body>
 </html>

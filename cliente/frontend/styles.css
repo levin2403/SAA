@@ -158,3 +158,29 @@ body{background:#f3f6fb;color:#111827}
   background:linear-gradient(135deg,#3b82f6,#2563eb)
 }
 
+/* --- ESTILOS ESPECIFICOS PARA REPORTE TIPO MATRIZ (Porque kevin me lo ordeno) --- */
+.matrix-table th, .matrix-table td {
+  text-align: center;
+  padding: 8px 4px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+}
+.matrix-table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  white-space: nowrap;
+}
+/* La primera columna (nombres) alineada a la izquierda y pegajosa */
+.matrix-table td:first-child, .matrix-table th:first-child {
+  text-align: left;
+  min-width: 200px;
+  position: sticky;
+  left: 0;
+  background-color: #fff;
+  z-index: 10;
+  border-right: 2px solid #e5e7eb;
+}
+.status-present { color: #10b981; font-weight: bold; } /* Verde para X */
+.status-absent { color: #ef4444; font-weight: bold; }  /* Rojo para F */
+/* Ajuste para contenedor con scroll horizontal */
+.reports-table-container { overflow-x: auto; }
