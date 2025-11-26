@@ -11,7 +11,10 @@ const userService = require('../integration/user.service');
 exports.getClassSession = async(classId, professorId, date) => 
 {
     try{
-        // get the attendance from the database
+        //verify if the given date es between the semester limits
+        verifyDateIsInSemester(date);
+
+        //get the attendance from the database
         const classSession = await getClassSession(classId, professorId, date);
 
         //if the class attendance of the day doesnt exist make a new one.
@@ -20,10 +23,27 @@ exports.getClassSession = async(classId, professorId, date) =>
             return newClassSession;
         }
 
-        return classSession; // in case the attendance exist return
+        return classSession; //case the attendance exist return
     }
     catch(error){
-        throw new Error('Error al obtener la asistencia del dia'); // General generic error
+        throw new Error(error.message); // General generic error
+    }
+}
+
+function verifyDateIsInSemester(date){
+    const givenDate = new Date(date)
+    givenDate.setUTCHours(14, 0, 0, 0)
+    console.log(givenDate)
+
+    semesterStartDate = new Date('2025-08-25')
+    console.log(semesterStartDate)
+
+    semesterEndDate = new Date('2025-12-13')
+    console.log(semesterEndDate)
+
+
+    if(givenDate < semesterStartDate || givenDate > semesterEndDate){
+        throw new Error('La fecha esta fuera del rango del periodo actual.')   
     }
 }
 
@@ -39,7 +59,7 @@ async function getClassSession(classId, professorId, date){
         return await classSessionReposistory.getClassSession(classId, professorId, date);
     }
     catch(error){
-        throw error; //Generic error
+        throw new Error('Error al obtener la asistencia del dia') //Generic error
     }
 }
 
@@ -52,6 +72,7 @@ async function getClassSession(classId, professorId, date){
  */
 async function createNewClassSession(classId, professorId, date) {
     try{
+
         //get the days that the class is imparted
         const days = await getProfessorDayClasses(classId); 
 
@@ -68,9 +89,10 @@ async function createNewClassSession(classId, professorId, date) {
         return newClassSession;
     }
     catch(error){
-        throw error; //Generic error
+        throw error.message; //Generic error
     }
-}
+}  
+
 
 /**
  * Helper function to seek for the classes that the class is imparted
@@ -84,7 +106,7 @@ async function getProfessorDayClasses(classId){
         return await userService.getProfessorClassesDays(classId);
     }
     catch(error){
-        throw error; //Generic error
+        throw new Error('Error al obtener la asistencia del dia'); //Generic error
     }
 }
 
@@ -127,7 +149,7 @@ async function getStudentsInClass(classId){
         return await userService.getStudentsByClassId(classId);
     }
     catch(error){
-        throw error; //Generic error
+        throw new Error('Error al obtener la asistencia del dia'); //Generic error
     }
 }
 
@@ -149,7 +171,7 @@ async function createClassSession(classId, professorId, classStudents, date) {
         return await classSessionReposistory.insertClassSession(classSession);
     }
     catch(error){
-        throw error; //Generic error
+        throw new Error('Error al obtener la asistencia del dia'); //Generic error
     }
 }
 

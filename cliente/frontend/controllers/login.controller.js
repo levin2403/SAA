@@ -16,8 +16,22 @@ $(".btn").click( async (e) => {
 
 
     // retrives login and validate content (11 digits and no letters)
-    const id = ($('#loginId').val() || '').trim().replace(/\D/g,'')
+    const id = ($('#loginId').val() || '').trim()
     const pass = $('#loginPass').val() || ''
+
+    //validate if its doesnt contain caracters o letters
+    if(!/^\d+$/.test(id)) {
+        $err.text('El ID solo debe contener números')
+        $err.show()
+        return
+    }
+
+    //validate if id is the required length
+    if(id.length !== 11){ 
+        $err.text('El ID debe tener 11 dígitos')    
+        $err.show()
+        return 
+    }  
 
     //validate if all fields are filled
     if(!id || !pass){
@@ -26,15 +40,10 @@ $(".btn").click( async (e) => {
         return 
     }
 
-    //validate if id is the required length
-    if(id.length !== 11){ 
-        $err.text('El ID debe tener 10 dígitos')    
-        $err.show()
-        return 
-    }  
-
     // log in user
     try {
+        $(".btn").prop('disabled', true); //disabling login button
+
         const userInfo = await api.login(id, pass);
     
         // Guardar objeto en localStorage
@@ -43,6 +52,7 @@ $(".btn").click( async (e) => {
     
         window.location.replace('dashboard.html');
     } catch (error) {
+        $(".btn").prop('disabled', false); // reactivate the button
         $err.text(error.message);
         $err.show();
     }    
