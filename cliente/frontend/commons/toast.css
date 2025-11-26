@@ -1,0 +1,34 @@
+/* Notification Toast */
+.notification-toast{
+    position:fixed;
+    bottom:-80px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:16px 24px;
+    border-radius:12px;
+    font-weight:600;
+    color:#fff;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    z-index:100;
+    transition:bottom 0.3s ease;
+    max-width:90%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis
+  }
+  
+  .notification-toast.show{
+    bottom:20px
+  }
+  
+  .notification-toast.success{
+    background:linear-gradient(135deg,#10b981,#059669)
+  }
+  
+  .notification-toast.error{
+    background:linear-gradient(135deg,#ef4444,#dc2626)
+  }
+  
+  .notification-toast.info{
+    background:linear-gradient(135deg,#3b82f6,#2563eb)
+  }

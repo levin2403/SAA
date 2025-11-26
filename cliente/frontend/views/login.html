@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Gestor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/login.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+  <main style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div class="login-card">
+      <div class="logo">
+        <div class="logo-icon">GT</div>
+        <h1>AttendanceHub</h1>
+      </div>
+      <p class="muted">Sistema de Control de Asistencias</p>
+      <form id="loginForm"> 
+        <label for="loginId">ID de Usuario</label>
+        <input id="loginId" type="text" maxlength="11" placeholder="1234567890" />
+        <label for="loginPass">Contraseña</label>
+        <input id="loginPass" type="password" placeholder="tu contraseña" />
+        <div id="loginError" class="login-error" aria-live="polite"></div>
+        <button type="submit" class="btn">Iniciar Sesión</button>
+      </form>
+    </div>
+  </main>
+  <script src="../controllers/login.controller.js" type="module"></script>
+</body>
+</html>

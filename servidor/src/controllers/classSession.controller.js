@@ -10,7 +10,6 @@ const classSessionReposistory = require('../repositories/classSession.repository
 exports.getClassSession = async(req, res) => {
   try {
     const { class_id, professor_id, date } = req.query;
-
     const classSession =  await getClassSessionService.
           getClassSession(class_id, professor_id, date);
 

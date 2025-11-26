@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Dashboard — Gestor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <main class="main">
+      <header class="topbar">
+        <div class="search"><input placeholder="Buscar" /></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="date" id="todayDate"></div>
+          <button id="nav-reportes-top" class="btn secondary teacher-only" style="display:none;padding:8px 14px;font-size:13px">Reportes</button>
+          <button id="logoutBtn-top" class="btn danger" style="padding:8px 14px;font-size:13px">Cerrar Sesión</button>
+        </div>
+      </header>
+
+      <section class="welcome">
+        <div class="welcome-left">
+          <h1 id="welcomeTitle">Bienvenido</h1>
+          <p id="welcomeMsg">Panel de control - </p>
+        </div>
+        <div class="welcome-right"><div class="illustration"></div></div>
+      </section>
+
+      <div id="cardsContainer" class="dynamic-cards"></div>
+
+      <section class="lessons" id="lessonsSection" style="display:none">
+        <h2>Lessons</h2>
+        <table>
+          <thead>
+            <tr><th>Class</th><th>Teacher Name</th><th>Members</th><th>Starting</th><th>Material</th><th>Payment</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A1</td><td>Bernard Carr</td><td>3</td><td>12.07.2022</td><td>Download</td><td>Done</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <div id="qrModal" class="modal hidden" role="dialog" aria-modal="true", closedBy="any">
+      <div class="modal-content">
+        <h3 id="qrTitle">Código QR</h3>
+        <div id="qrBody" class="qr-body"></div>
+        <button id="closeQr" class="btn">Cerrar</button>
+      </div>
+    </div>
+
+    <div id="logoutConfirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true", closedBy="any">
+      <div class="confirm-modal-content">
+        <h3>Cerrar sesión</h3>
+        <p>¿Estás seguro de que deseas cerrar la sesión?</p>
+        <div class="confirm-modal-buttons">
+          <button id="confirmLogout" class="btn danger">Cerrar sesión</button>
+          <button id="cancelLogout" class="btn secondary">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="../controllers/dashboard.controller.js"></script>
+</body>
+</html>

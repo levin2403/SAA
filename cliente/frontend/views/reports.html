@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reportes — Gestor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../css/reports.css" />
+</head>
+<body>
+  <div class="reports-container">
+    <div class="reports-header">
+      <h2>Reportes de asistencia</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="exportCSV" class="btn">Exportar CSV</button>
+        <button onclick="history.back()" class="btn outline">Volver</button>
+      </div>
+    </div>
+
+    <div class="reports-filters">
+      <div>
+        <label for="filterClass">Materia:</label>
+        <select id="filterClass">
+        </select>
+      </div>
+      <div>
+        <label for="filterStartDate">Desde:</label>
+        <input type="date" id="filterStartDate" min="2025-08-25" max="2025-12-30"/>
+      </div>
+      <div>
+        <label for="filterEndDate">Hasta:</label>
+        <input type="date" id="filterEndDate" min="2025-08-25" max="2025-12-30"/>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button id="searchBtn" class="btn">Buscar</button>
+      </div>
+    </div>
+
+    <div class="reports-table-container">
+      <table id="reportsTable">
+        <thead>
+          <tr>
+            <th>Materia</th>
+            <th>Fecha</th>
+            <th id="dateHeader"></th>
+          </tr>
+        </thead>
+        <tbody id="reportsTableBody">
+          <tr><td colspan="100" style="text-align:center;padding:20px;color:#6b7280">No hay datos disponibles</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="reportsArea" style="margin-top:20px;color:#6b7280;font-size:14px;display:none">
+      <p id="reportsStats"></p>
+    </div>
+  </div>
+
+  <script src="../controllers/reports.controller.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toma de lista — Gestor</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../commons/toast.css" />
+    <link rel="stylesheet" href="../css/attendance.css" />
+    <script src="https://unpkg.com/html5-qrcode"></script>  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="attendance-container">
+      <div class="attendance-header">
+        <div>
+          <button onclick="history.back()" class="btn outline">Volver</button>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <button id="toggleQR" class="btn">Leer QR</button>
+          <button id="toReports" class="btn outline">Ver reportes</button>
+        </div>
+      </div>
+
+      <h2 id="attendanceTitle" style="margin-top: 12px; margin-bottom: 2rem">
+        Toma de lista: 
+      </h2>
+
+      <div class="attendance-info">
+        <div>
+          <label for="attendanceDate"><strong>Fecha:</strong></label>
+          <div class="date-group">
+            <input type="date" id="attendanceDate" min="2025-08-25" max="2025-12-30"/>
+            <button id="search-attendance" class="btn">Buscar </button>
+          </div>
+        </div>
+        <div class="schedule-info">
+          <div>
+            <strong>Dias: </strong><br> 
+            <span id="classScheduleInfo"></span>
+          </div>
+          <div>
+            <strong>Horas: </strong><br>
+            <span id="hours-info"></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="qrSection" class="qr-section hidden">
+        <h3>Lector de Código QR</h3>
+        <div class="qr-reader-container">
+          <div id="qr-reader"></div>
+        </div>
+        <p
+          id="qrStatus"
+          style="color: #6b7280; font-size: 12px; margin-top: 8px"
+        >
+          Estado: Escaneando...
+        </p>
+        <button
+          id="closeQRReader"
+          class="btn secondary"
+          style="margin-top: 12px; display: none"
+        >
+          Cerrar lector QR
+        </button>
+      </div>
+
+      <div class="tittle-group">
+        <h3>Lista de asistencia</h3>
+        <div class="checking-group">
+          <button id="selectAll" class="btn secondary">Marcar todos</button>
+          <button id="deselectAll" class="btn secondary">Desmarcar todos</button>
+        </div>
+      </div>
+      <div class="attendance-students" id="attendanceStudents"></div>
+
+      <div style="margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap">
+        <button id="saveAttendance" class="btn">Guardar asistencia</button>
+      </div>
+    </div>
+
+    <script type="module" src="../controllers/attendance.controller.js"></script>
+  </body>
+</html>

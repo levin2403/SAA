@@ -40,9 +40,9 @@ exports.handleGlobalLogout = async (req, res) => {
 
 // Controller function to handle single device logout requests
 exports.handleSingleDeviceLogout = async (req, res) => {
-  const { id, refreshToken } = req.body;
+  const { id, refresh_token } = req.body;
   try {
-      await logoutService.singleDeviceLogout(id, refreshToken);
+      await logoutService.singleDeviceLogout(id, refresh_token);
       res.status(200).json();
   } catch (error) {
       res.status(500).json({ error: error.message }); 

@@ -7,7 +7,7 @@ const sessionController = require('../controllers/session.controller');
 const sensibleRouteLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 5, // Limit each IP to 5 login requests per `window`
-    message: "Too many attempts from this IP, please try again later.",
+    message: "Haz realizado demasiadas peticiones, espera un poco he intenta de nuevo.",
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false,  // Disable the `X-RateLimit-*` headers
 });

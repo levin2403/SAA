@@ -43,7 +43,6 @@ async function authenticateUser(userId, password) {
       },
     };
   } catch (error) {
-    console.error('Authentication error:', error.message);
     throw new Error(error.message);
   }
 }
@@ -51,7 +50,7 @@ async function authenticateUser(userId, password) {
 // Verify required fields
 function validateInputFields(userId, password) {
   if (!userId || !password) {
-    throw new Error('Missing required fields: userId and password');
+    throw new Error('Ingrese todos los campos antes de continuar');
   }
 }
 
@@ -62,7 +61,7 @@ async function findSessionByUserId(userId){
       return session;
   }
   catch(error){
-      throw new Error("No se pudo refrescar el token de acceso");
+      throw new Error("Error al iniciar sesion, intente de nuevo");
   }
 }
 
@@ -87,7 +86,7 @@ async function validateUserCredentials(userId, password)
       return response.user;
   }
   catch(error){
-      throw new Error(error.message);
+      throw new Error('ID o contraseña invalidos');
   }
 }
 

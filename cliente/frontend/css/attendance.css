@@ -1,0 +1,180 @@
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial
+}
+
+body{
+  background:#f3f6fb;
+  color:#111827;
+}
+
+/* Buttons */
+.btn{
+  background:linear-gradient(90deg,#3b82f6,#8b5cf6);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(99,102,241,0.12);
+  transition:all 0.3s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(99,102,241,0.2);
+}
+
+.btn.outline{
+  background:transparent;
+  border:1px solid #e6eefc;
+  color:#0f172a;
+}
+
+.btn.outline:hover{
+  background:#f1f5f9;
+}
+
+.btn.secondary{
+  background:#f3f4f6;
+  color:#111827;
+  border:1px solid #e5e7eb;
+}
+
+.hidden{
+  display:none;
+}
+
+/* Attendance screen */
+.attendance-container{
+  max-width:900px;
+  margin:28px auto;
+  padding:20px;
+}
+
+.attendance-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.attendance-info{
+  margin-bottom:12px;
+  color:#6b7280;
+  display:flex;
+  flex-direction:column-reverse;
+  gap:2rem;
+}
+
+.attendance-students{
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(2,6,23,0.05);
+  max-height:400px;
+  overflow-y:auto;
+  margin-bottom:12px;
+}
+
+.student-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid #f3f4f6;
+}
+
+.student-item:last-child{
+  border-bottom:none;
+}
+
+.qr-section{
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(2,6,23,0.05);
+  margin-bottom:12px;
+  text-align:center;
+}
+
+.qr-reader-container{
+  width:100%;
+  max-width:300px;
+  margin:12px auto;
+  border-radius:8px;
+  overflow:hidden;
+}
+
+#qr-reader{
+  width:100%;
+  border-radius:8px;
+}
+
+
+
+.attendance-info label{
+  margin-left: 0.3rem;
+}
+
+
+#attendanceDate{
+  background:#fff;
+  padding: 10px 5px 10px 5px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(2,6,23,0.05);
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  border-style: solid;
+  border-width: 1.5px;
+  margin-top: 0.3rem;
+}
+
+#attendanceDate:focus{
+  border-style: solid;
+  border-width: 2px;
+}
+
+#attendanceDate label{
+  display:block;
+  font-weight:600;
+  margin-bottom:4px;
+  font-size:14px;
+  margin-bottom: 1rem;
+}
+
+#attendanceDate input,
+#attendanceDate select{
+  width:100%;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #e5e7eb;
+}
+
+.tittle-group{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0px 1rem 0px; 
+}
+
+.date-group{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.schedule-info{
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+}
+
+span{
+  margin-bottom: 0.3rem;
+}

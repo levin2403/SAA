@@ -14,7 +14,7 @@ exports.uptdateAttendance = async(classSessionId, attendances) =>
         if(!attendances || !classSessionId) 
             throw new Error('Error al guardar las asistencias, intente de nuevo');
         
-        const updatedSession = await classSessionReposistory.updateAttendences(classSessionId, attendances);
+        await classSessionReposistory.updateAttendences(classSessionId, attendances);
     }
     catch(error){
         throw new Error(error.message) //General generic error
