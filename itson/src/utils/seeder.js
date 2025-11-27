@@ -115,7 +115,7 @@ const seedDatabase = async () => {
         await UserModel.insertMany(users);
         await ClassModel.insertMany(classes);
 
-        console.log('Database populated correctly');
+        console.log('Database populated correctly.');
 
     } catch (error) {
         console.error('An error ocurred while populating the database', error);
