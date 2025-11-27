@@ -15,9 +15,19 @@ if(!user){ window.location.replace('login.html') }
 $(async function(){
     setHeaderInfo()
     setReportsButton()
-    const classes = await getClasses()
-    await loadClasses(classes)
-    saveClassesGlobal(classes);
+    
+    try {
+        const classes = await getClasses()
+        // Validación extra: asegurar que classes sea un array antes de cargarlo
+        if (Array.isArray(classes)) {
+            await loadClasses(classes)
+            saveClassesGlobal(classes);
+        } else {
+            console.error("El formato de clases recibido no es válido:", classes);
+        }
+    } catch (error) {
+        console.error("Error al cargar las clases:", error);
+    }
 })
 
 function setHeaderInfo(){
@@ -26,8 +36,9 @@ function setHeaderInfo(){
 }
 
 function setReportsButton(){
+    // Solo mostrar reportes si es profesor
     if(user.rol === 'PROFESSOR'){
-        Array.from(document.querySelectorAll('.teacher-only')).forEach(el=>el.style.display='block')
+        $('.teacher-only').show(); // jQuery para mostrar elementos ocultos
     }
 }
 
@@ -37,42 +48,49 @@ function saveClassesGlobal(classes){
 
 async function getClasses(){
     if(user.rol === 'STUDENT'){
-        const classes = await api.getStudentClasses(user.id);
-        return classes
+        return await api.getStudentClasses(user.id);
     }
     else{
-        const classes = await api.getProfessorClasses(user.id);
-        return classes
+        return await api.getProfessorClasses(user.id);
     }
 }
 
 async function loadClasses(classes){
-    if(!classes) return //if there is no classes to load
+    if(!classes || classes.length === 0) {
+        $('#cardsContainer').html('<p style="padding:20px; color:#6b7280">No tienes materias asignadas actualmente.</p>');
+        return;
+    }
     
     const $container = $('#cardsContainer')
+    $container.empty() // Limpiar contenedor por si acaso
+
     const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
 
     classes.forEach((c, idx)=>{
-        const finalDays = c.days.join(', ');
+        // Asegurar que days sea un array antes de join
+        const finalDays = Array.isArray(c.days) ? c.days.join(', ') : c.days;
     
         const headClass = gradientClasses[idx % gradientClasses.length]
         const $card = $('<div>', { class: 'card' }).html(`
             <div class="card-head ${headClass}">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                    <span class="code-pill">${c.code || 'S/C'}</span>
+                </div>
                 <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
             </div>
             <div class="card-body">
-                <div style="margin-bottom:8px;color:#6b7280">${finalDays}</div>
-                <div style="margin-bottom:8px;color:#6b7280">${c.hours}</div>
-                <div style="margin-bottom:12px;color:#6b7280">${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}</div>
+                <div style="margin-bottom:8px;color:#6b7280">📅 ${finalDays}</div>
+                <div style="margin-bottom:8px;color:#6b7280">⏰ ${c.hours}</div>
+                <div style="margin-bottom:12px;color:#6b7280">
+                    ${user.rol === 'STUDENT' ? (c.teacher?.name || 'Sin profesor') : ((c.studentCount || 0) + ' estudiantes')}
+                </div>
                 <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
             </div>
         `)
 
         $card.find('.action-btn').on('click', async()=>{
-        if(user.rol === 'STUDENT'){
-            console.log(c._id, c.code)
-                await generateQr(c._id, c.code)  
+            if(user.rol === 'STUDENT'){
+                await generateQr(c._id || c.id, c.code)  
             } 
             else {
                 navigateToAttendance(c)
@@ -95,12 +113,13 @@ async function generateQr(classId, classCode){
     img.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedData}`
     img.style.borderRadius = '8px'
     img.alt = 'Código QR'
-    document.getElementById('qrBody').appendChild(img)
+    
+    const qrBody = document.getElementById('qrBody')
+    qrBody.innerHTML = '' // Limpiar QR anterior
+    qrBody.appendChild(img)
 
     function showQRModal(classCode){
-        //show the modal
         document.getElementById('qrTitle').textContent = `Código QR - ${classCode}`
-        document.getElementById('qrBody').innerHTML = ''
         document.getElementById('qrModal').classList.remove('hidden')
     }
     
@@ -116,31 +135,32 @@ async function generateQr(classId, classCode){
     }
 }
 
-
 function navigateToAttendance(theClass){
-    //delete last selected class if exist
-    const lastSelectedClass = sessionStorage.getItem('selectedClass')
-    if(lastSelectedClass) sessionStorage.removeItem('selectedClass');
-
-    //save the global
+    sessionStorage.removeItem('selectedClass');
     sessionStorage.setItem('selectedClass', JSON.stringify(theClass));
-    //navigate to the attendences screen-
     window.location.href = 'attendance.html'
 }
 
 async function handleLogout() {
     try{
         const id = user.id
-        const refreshToken = tokens.refresh
-        await sessionApi.singleDeviceLogout(id, refreshToken);
-
-        window.location.replace('login.html')
+        // Validación simple por si tokens es null
+        const refreshToken = tokens ? tokens.refresh : null;
+        
+        if(refreshToken) {
+            await sessionApi.singleDeviceLogout(id, refreshToken);
+        }
 
         localStorage.removeItem('user')
         localStorage.removeItem('tokens')
+        window.location.replace('login.html')
     }
     catch(error){
-        showNotification(error.message, 'error')
+        console.error("Error al cerrar sesión:", error);
+        // Forzar logout local en caso de error de red
+        localStorage.removeItem('user')
+        localStorage.removeItem('tokens')
+        window.location.replace('login.html')
     }
 }
 
@@ -158,7 +178,6 @@ function openLogoutConfirm(){
 $logoutBtnTop.on('click', openLogoutConfirm)
 
 $confirmLogout.on('click', async ()=> {
-    console.log('si me aplastaron we')
     await handleLogout()
 })
 

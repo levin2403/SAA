@@ -2,7 +2,6 @@
 (function(){
   window.SCREENS = {}
 
-  // --- DATOS DE PRUEBA (MOCKS) ---
   const users = {
     '1234567890': { password: 'alumno123', type: 'student', name: 'Ana García' },
     '0987654321': { password: 'maestro123', type: 'teacher', name: 'Prof. Carlos Méndez' }
@@ -33,111 +32,36 @@
     ] },
   ]
 
-  // --- MANEJO DE STORAGE ---
   function getStoredRecords(){ try{ return JSON.parse(localStorage.getItem('attendanceRecords')||'[]') }catch(e){return[]} }
   function persistStoredRecords(arr){ try{ localStorage.setItem('attendanceRecords', JSON.stringify(arr)) }catch(e){} }
+
+  function exportCSV(rows, filename='reportes.csv'){
+    const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], {type:'text/csv'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url)
+  }
 
   function saveUserToStorage(user){ localStorage.setItem('saa_currentUser', JSON.stringify(user)) }
   function getUserFromStorage(){ try{return JSON.parse(localStorage.getItem('saa_currentUser')||'null')}catch(e){return null} }
   function logout(){ localStorage.removeItem('saa_currentUser'); window.location.href='login.html' }
 
-  // --- UTILIDADES DE FECHA ---
-  
-  // Convierte string "YYYY-MM-DD" a Date local (00:00:00)
-  function parseLocalYMD(dateString) {
-    if (!dateString) return null;
-    const [y, m, d] = dateString.split('-').map(Number);
-    return new Date(y, m - 1, d); 
-  }
-
-  // Devuelve "YYYY-MM-DD" basado en hora local
-  function formatDateForInput(date){
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  // --- LÓGICA DE NEGOCIO ---
-
-  // Filtra registros comparando timestamps para precisión exacta
-  function getAttendanceRecordsByDateRange(startDateStr, endDateStr, classId=null){
+  function getAttendanceRecordsByDateRange(startDate, endDate, classId=null){
     const recs = getStoredRecords()
-    
-    // Convertimos los inputs a fechas locales (inicio y fin del día)
-    const start = parseLocalYMD(startDateStr);
-    const end = parseLocalYMD(endDateStr);
-    
-    // Ajustar el final del día para incluir registros de ese día completo
-    if(end) end.setHours(23, 59, 59, 999);
-
-    return recs.filter(r => {
-      const rDate = new Date(r.date); // Fecha del registro
-      
-      // Normalizamos la fecha del registro para comparar solo la fecha calendario si es necesario,
-      // pero aquí comparamos timestamps completos.
-      const recordTime = rDate.getTime();
-      
-      let inRange = true;
-      if (start && recordTime < start.getTime()) inRange = false;
-      if (end && recordTime > end.getTime()) inRange = false;
-
-      // Filtro opcional por ID de clase (asegurando tipos iguales)
-      const matchClass = classId ? (String(r.classId) === String(classId)) : true;
-
-      return inRange && matchClass;
+    return recs.filter(r=>{
+      const d = new Date(r.date).toLocaleDateString()
+      const s = new Date(startDate).toLocaleDateString()
+      const e = new Date(endDate).toLocaleDateString()
+      const inRange = d >= s && d <= e
+      return classId ? (inRange && r.classId === classId) : inRange
     })
   }
 
-  // --- EXPORTACIÓN ---
-
-  function exportCSV(rows, filename='reportes.csv'){
-    // Convertir array de arrays a string CSV
-    const csvContent = rows.map(r => 
-      r.map(c => {
-        // Manejar valores nulos y escapar comillas dobles
-        const val = c === null || c === undefined ? '' : String(c);
-        return `"${val.replace(/"/g, '""')}"`; 
-      }).join(',')
-    ).join('\n');
-
-    // Agregar BOM (\uFEFF) para que Excel reconozca caracteres latinos (tildes, ñ)
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-    
-    // Crear link de descarga y clickearlo
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); 
-    a.href = url; 
-    a.download = filename; 
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click(); 
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  function formatDateForInput(date){
+    return date.toISOString().split('T')[0]
   }
 
-  // --- QR HELPERS ---
-  function generateQRData(studentId, studentName, classId, classCode){
-    return JSON.stringify({
-      type: 'attendance_qr',
-      studentId: studentId,
-      studentName: studentName,
-      classId: classId,
-      classCode: classCode,
-      timestamp: new Date().toISOString()
-    })
-  }
-
-  function parseQRData(qrText){
-    try {
-      const data = JSON.parse(qrText)
-      return (data.type === 'attendance_qr') ? data : null
-    } catch(e) {
-      return null
-    }
-  }
-
-  // --- EXPONER A WINDOW ---
+  // Exponer
   window.SCREENS.users = users
   window.SCREENS.studentClasses = studentClasses
   window.SCREENS.teacherClasses = teacherClasses
@@ -149,8 +73,5 @@
   window.SCREENS.logout = logout
   window.SCREENS.getAttendanceRecordsByDateRange = getAttendanceRecordsByDateRange
   window.SCREENS.formatDateForInput = formatDateForInput
-  window.SCREENS.parseLocalYMD = parseLocalYMD
-  window.SCREENS.generateQRData = generateQRData
-  window.SCREENS.parseQRData = parseQRData
 
 })()

@@ -15,23 +15,25 @@ exports.getClassSession = async(req, res) => {
 
     res.status(200).json(classSession);
   } catch (error) {
-    res.status(403).json(error.message);
+    // Enviamos el error como objeto JSON para que el frontend lo pueda leer
+    res.status(403).json({ message: error.message });
   }
 }
 
 /**
  * Controller method to update the attendances of a class session
- * 
- * @param {Object} req 
+ * * @param {Object} req 
  * @param {Object} res 
  */
 exports.updateAttendance = async(req, res) => {
   try {
     const { class_session_id, attendances} = req.body;
     await updateAttendanceService.uptdateAttendance(class_session_id, attendances);
-    res.status(200).json();
+    
+    // CORRECCIÓN: Enviamos un objeto JSON válido en lugar de una respuesta vacía
+    res.status(200).json({ message: "Asistencia actualizada correctamente" });
   } catch (error) {
-    res.status(403).json(error.message);
+    res.status(403).json({ message: error.message });
   }
 }
 
@@ -39,25 +41,20 @@ exports.updateAttendance = async(req, res) => {
 /**
  * Controller method to ge the attendances of a class session in 
  * range of dates.
- * 
- * @param {Object} req 
+ * * @param {Object} req 
  * @param {Object} res 
  */
 exports.getAttendancesByDates = async(req, res) => {
   try {
     const { class_id, professor_id, begining, end} = req.query;
 
-    console.log(class_id, professor_id, begining, end);
+    // console.log(class_id, professor_id, begining, end);
     
     const attendances = await classSessionReposistory.
       getAttendancesByDates(class_id, professor_id, begining, end);
     
       res.status(200).json(attendances);
   } catch (error) {
-    res.status(403).json(error.message);
+    res.status(403).json({ message: error.message });
   }
 }
-
-
-
-

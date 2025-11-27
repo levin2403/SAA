@@ -1,42 +1,87 @@
 import { API_URL } from "../globals/class.globals.js";
 
-class ClassSessionService {
-  
-  // ... otros métodos existentes ...
+export default class ClassSessionService {
 
   /**
-   * Obtiene los registros de asistencia en un rango de fechas desde el servidor.
-   * @param {string} classId - ID de la materia
-   * @param {string} professorId - ID del profesor
-   * @param {string} startDate - Fecha inicio (YYYY-MM-DD)
-   * @param {string} endDate - Fecha fin (YYYY-MM-DD)
+   * Obtiene la sesión de clase para una fecha específica.
+   * Usado en: attendance.controller.js
    */
-  async getAttendancesByRange(classId, professorId, startDate, endDate) {
+  async getClassSession(classId, professorId, date) {
     try {
-      // Construimos la URL con los Query Params que espera tu backend (classSession.controller.js)
-      const url = `${API_URL}/class/session/attendances/dates?class_id=${classId}&professor_id=${professorId}&begining=${startDate}&end=${endDate}`;
+      const url = `${API_URL}/class/session?class_id=${classId}&professor_id=${professorId}&date=${date}`;
       
-      const token = localStorage.getItem('token'); // Asumiendo que guardas el token al hacer login
-
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Si usas auth middleware
-        }
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!response.ok) {
+        // Si el servidor devuelve 404, retornamos null para indicar que no hay sesión
+        if(response.status === 404) return null;
+        
+        const error = await response.json();
+        throw new Error(error.message || 'Error al obtener la sesión');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error("Service Error (getClassSession):", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualiza o crea la asistencia.
+   * Usado en: attendance.controller.js
+   */
+  async updateAttendance(classSessionId, attendances) {
+    try {
+      const response = await fetch(`${API_URL}/update/attendance`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          class_session_id: classSessionId,
+          attendances: attendances
+        })
       });
 
       if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al actualizar asistencia');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Service Error (updateAttendance):", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene reporte de asistencias por rango.
+   * Usado en: reports.controller.js
+   */
+  async getAttendancesByRange(classId, professorId, startDate, endDate) {
+    try {
+      const url = `${API_URL}/attendances/dates?class_id=${classId}&professor_id=${professorId}&begining=${startDate}&end=${endDate}`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!response.ok) {
+        // Manejo silencioso si no hay datos
+        if(response.status === 404) return [];
+        
         const error = await response.json();
         throw new Error(error.message || 'Error al obtener reporte');
       }
 
       return await response.json();
     } catch (error) {
-      console.error("Service Error:", error);
+      console.error("Service Error (getAttendancesByRange):", error);
       throw error;
     }
   }
 }
-
-export default new ClassSessionService();
