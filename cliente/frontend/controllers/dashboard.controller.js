@@ -59,12 +59,27 @@ async function loadClasses(classes){
         const $card = $('<div>', { class: 'card' }).html(`
             <div class="card-head ${headClass}">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
-                <h4 style="color:#fff;font-weight:700;margin-top:8px">${c.name}</h4>
+                <h4 style="color:#fff;font-weight:700;margin-top:8px; font-size: 1.2rem">${c.name}</h4>
             </div>
             <div class="card-body">
-                <div style="margin-bottom:8px;color:#6b7280">${finalDays}</div>
-                <div style="margin-bottom:8px;color:#6b7280">${c.hours}</div>
-                <div style="margin-bottom:12px;color:#6b7280">${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}</div>
+                <div style="margin-bottom:8px; color:#6b7280; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined">
+                        calendar_today
+                    </span>
+                    ${finalDays}
+                </div>
+                <div style="margin-bottom:8px; color:#6b7280; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined">
+                        schedule
+                    </span>
+                    ${c.hours}
+                </div>
+                <div style="margin-bottom:12px; color:#6b7280; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined">
+                        group
+                    </span>
+                    ${user.rol === 'STUDENT' ? (c.teacher.name||'') : ((c.studentCount) + ' estudiantes')}
+                </div>
                 <button class="action-btn">${user.rol === 'STUDENT' ? 'Ver Código QR' : 'Tomar Lista'}</button>
             </div>
         `)
