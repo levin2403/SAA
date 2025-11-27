@@ -5,49 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reportes — Gestor</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../css/styles.css" />
   <link rel="stylesheet" href="../css/reports.css" />
+  <style>
+    /* Estilos rápidos para la matriz de asistencia */
+    .status-present { color: #16a34a; font-weight: bold; background-color: #f0fdf4; }
+    .status-absent { color: #dc2626; font-weight: bold; background-color: #fef2f2; }
+    .status-none { color: #9ca3af; }
+    .matrix-table th, .matrix-table td { border: 1px solid #e5e7eb; }
+    /* Scroll horizontal para muchas fechas */
+    .reports-table-container { overflow-x: auto; }
+  </style>
 </head>
 <body>
   <div class="reports-container">
     <div class="reports-header">
       <h2>Reportes de asistencia</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="exportCSV" class="btn">Exportar CSV</button>
+        <button id="exportCSV" class="btn secondary">Exportar CSV</button>
         <button onclick="history.back()" class="btn outline">Volver</button>
       </div>
     </div>
 
-    <div class="reports-filters">
-      <div>
-        <label for="filterClass">Materia:</label>
-        <select id="filterClass">
-        </select>
-      </div>
-      <div>
-        <label for="filterStartDate">Desde:</label>
-        <input type="date" id="filterStartDate" min="2025-08-25" max="2025-12-30"/>
-      </div>
-      <div>
-        <label for="filterEndDate">Hasta:</label>
-        <input type="date" id="filterEndDate" min="2025-08-25" max="2025-12-30"/>
-      </div>
-      <div style="display:flex;align-items:flex-end">
-        <button id="searchBtn" class="btn">Buscar</button>
+    <div class="reports-filters card">
+      <div style="padding: 15px; display:flex; gap:15px; flex-wrap:wrap; align-items: flex-end;">
+        <div style="flex:1; min-width: 200px;">
+          <label for="filterClass" style="display:block; margin-bottom:5px; font-weight:600">Materia:</label>
+          <select id="filterClass" style="width:100%; padding:8px; border-radius:8px; border:1px solid #ddd;">
+            <option value="">Selecciona una materia...</option>
+          </select>
+        </div>
+        <div>
+          <label for="filterStartDate" style="display:block; margin-bottom:5px; font-weight:600">Desde:</label>
+          <input type="date" id="filterStartDate" style="padding:8px; border-radius:8px; border:1px solid #ddd;"/>
+        </div>
+        <div>
+          <label for="filterEndDate" style="display:block; margin-bottom:5px; font-weight:600">Hasta:</label>
+          <input type="date" id="filterEndDate" style="padding:8px; border-radius:8px; border:1px solid #ddd;"/>
+        </div>
+        <div>
+          <button id="searchBtn" class="btn">Buscar</button>
+        </div>
       </div>
     </div>
 
-    <div class="reports-table-container">
-      <table id="reportsTable">
+    <div class="reports-table-container card" style="margin-top: 20px; padding: 0;">
+      <table id="reportsTable" class="matrix-table" style="width:100%; border-collapse: collapse;">
         <thead>
-          <tr>
-            <th>Materia</th>
-            <th>Fecha</th>
-            <th id="dateHeader"></th>
+          <tr id="tableHeaderRow">
+            <th style="padding:15px; text-align:left;">Alumno</th>
+            <th>Esperando búsqueda...</th>
           </tr>
         </thead>
         <tbody id="reportsTableBody">
-          <tr><td colspan="100" style="text-align:center;padding:20px;color:#6b7280">No hay datos disponibles</td></tr>
+          <tr><td colspan="100" style="text-align:center;padding:40px;color:#6b7280">Selecciona materia y rango de fechas para generar el reporte.</td></tr>
         </tbody>
       </table>
     </div>
@@ -57,6 +68,6 @@
     </div>
   </div>
 
-  <script src="../controllers/reports.controller.js"></script>
+  <script type="module" src="../controllers/reports.controller.js"></script>
 </body>
 </html>

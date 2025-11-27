@@ -1,74 +1,42 @@
-import axios from 'https://cdn.jsdelivr.net/npm/axios@1.6.0/+esm';
+import { API_URL } from "../globals/class.globals.js";
 
-export default class  ClassSessionService {
+class ClassSessionService {
   
-  constructor(baseURL = 'http://localhost:3001'){
-    this.api = axios.create({
-      baseURL,
-      timeout: 15000,
-      headers: { 'Content-Type': 'application/json' }
-    });  
-  }
+  // ... otros métodos existentes ...
 
   /**
-   * GET /class/session
-   * @param {{ class_id: string, professor_id: string, date: string }} params
+   * Obtiene los registros de asistencia en un rango de fechas desde el servidor.
+   * @param {string} classId - ID de la materia
+   * @param {string} professorId - ID del profesor
+   * @param {string} startDate - Fecha inicio (YYYY-MM-DD)
+   * @param {string} endDate - Fecha fin (YYYY-MM-DD)
    */
-  async getClassSession(classId, professorId, date){
-    try{
-      const response =  await this.api.get('/class/session/', {
-        params: {
-          class_id: classId,
-          professor_id: professorId,
-          date: date
-        }
-      })
-      return response.data
-    }catch(error){
-      const errorMessage = error.response?.data;
-      throw new Error(errorMessage || 'Error al obtener las clases');
-    }
-  }
+  async getAttendancesByRange(classId, professorId, startDate, endDate) {
+    try {
+      // Construimos la URL con los Query Params que espera tu backend (classSession.controller.js)
+      const url = `${API_URL}/class/session/attendances/dates?class_id=${classId}&professor_id=${professorId}&begining=${startDate}&end=${endDate}`;
+      
+      const token = localStorage.getItem('token'); // Asumiendo que guardas el token al hacer login
 
-  /**
-   * PUT /update/attendance
-   * @param {String} classSessionId 
-   * @param {String} updatedAttendance 
-   * @returns 
-   */
-  async updateAttendance(classSessionId, updatedAttendance){
-    try{
-      await this.api.put('/update/attendance/',
-       {
-          class_session_id: classSessionId,
-          attendances: updatedAttendance
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Si usas auth middleware
         }
-      )
-    }catch(error){
-      const errorMessage = error.response?.data;
-      throw new Error(errorMessage || 'Error al guardar las asistencias, intente de nuevo');
-    }
-  }
+      });
 
-  /**
-   * GET /attendances/dates
-   * @param {*} classId 
-   */
-  async getAttendancesByDates(classId, professorId, begining, end){
-    try{
-      const response =  await this.api.get('/attendances/dates/', {
-        params: {
-          class_id: classId,
-          professor_id: professorId,
-          begining: begining,
-          end: end
-        }
-      })
-      return response.data
-    }catch(error){
-      const errorMessage = error.response?.data;
-      throw new Error(errorMessage || 'Error las asistencias');      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al obtener reporte');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Service Error:", error);
+      throw error;
     }
   }
 }
 
+export default new ClassSessionService();

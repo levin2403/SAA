@@ -21,8 +21,7 @@ exports.getStudentsByClassId = async (classId) =>
 
 /**
  * Gets the days that a certain class are being imparted
- * 
- * @param {*} professorId
+ * * @param {*} professorId
  * @param {*} class_id
  * @returns 
  */
