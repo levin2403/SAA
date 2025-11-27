@@ -46,9 +46,6 @@ exports.updateAttendance = async(req, res) => {
 exports.getAttendancesByDates = async(req, res) => {
   try {
     const { class_id, professor_id, begining, end} = req.query;
-
-    console.log(class_id, professor_id, begining, end);
-    
     const attendances = await classSessionReposistory.
       getAttendancesByDates(class_id, professor_id, begining, end);
     
