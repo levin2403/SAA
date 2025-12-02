@@ -7,7 +7,7 @@ const RefreshTokenSchema = new mongoose.Schema({
     type: Date, 
     default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days 
   }
-}, { _id: false }); // _id false couse its not necessary for this schema
+}, { _id: false }); 
 
 const SessionSchema = new mongoose.Schema({
   userId: { type: String, required: true },

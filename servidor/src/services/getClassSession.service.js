@@ -33,13 +33,10 @@ exports.getClassSession = async(classId, professorId, date) =>
 function verifyDateIsInSemester(date){
     const givenDate = new Date(date)
     givenDate.setUTCHours(14, 0, 0, 0)
-    console.log(givenDate)
 
     semesterStartDate = new Date('2025-08-25')
-    console.log(semesterStartDate)
 
     semesterEndDate = new Date('2025-12-13')
-    console.log(semesterEndDate)
 
 
     if(givenDate < semesterStartDate || givenDate > semesterEndDate){

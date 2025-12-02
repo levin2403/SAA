@@ -13,7 +13,7 @@ exports.globalLogout = async (userId) =>
         console.error('Logout error:', error);
         throw new Error('Logout failed');
     }
-}
+}  
 
 /**
  * Controller function that handles a single device logout.
