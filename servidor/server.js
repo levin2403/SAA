@@ -4,7 +4,7 @@ const connectDB = require('./src/config/db');
 const outhRouter = require('./src/routers/session.router');
 const usersRouter = require('./src/routers/user.routes');
 const getClassSessionRouter = require('./src/routers/classSession.router');
-const seedClassSessions = require('./src/utils/seeder'); 
+const seedSessions = require('./src/utils/seeder'); 
 
 require('dotenv').config();
 
@@ -20,11 +20,9 @@ app.use('/', outhRouter);
 app.use('/', usersRouter);
 app.use('/', getClassSessionRouter);
 
-// --- CONEXIÓN Y SEED ---
 connectDB().then(async () => {
     
-    // 2. EJECUTAR SEEDER AL INICIO
-    await seedClassSessions();
+    await seedSessions();
 
     app.listen(PORT, () => {
         console.log(`Attendance Server running on port ${PORT}`);

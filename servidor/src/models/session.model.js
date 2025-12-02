@@ -12,7 +12,7 @@ const RefreshTokenSchema = new mongoose.Schema({
 const SessionSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   tokenVersion: { type: Number, required: true },
-  lastConnection: { type: Date, required: true },
+  lastConnection: { type: Date, default: Date.now },
   refreshTokens: [RefreshTokenSchema]
 });
 
