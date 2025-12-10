@@ -21,13 +21,14 @@ $(async function(){
 })
 
 function setHeaderInfo(){
+    const today = new Date()
     $('#welcomeTitle').text(`Bienvenido, ${user.name}`)
-    $('#welcomeMsg').text('Panel de control - ' + new Date().toLocaleString().split(',')[0])
+    $('#welcomeMsg').text(`Vistado de las clases ${today.toLocaleString().split(',')[0]} · ${today.toLocaleTimeString()}`)
 }
 
 function setReportsButton(){
     if(user.rol === 'PROFESSOR'){
-        Array.from(document.querySelectorAll('.teacher-only')).forEach(el=>el.style.display='block')
+        Array.from(document.querySelectorAll('.teacher-only')).forEach(el=>el.style.display='flex')
     }
 }
 
@@ -58,10 +59,21 @@ async function loadClasses(classes){
         const headClass = gradientClasses[idx % gradientClasses.length]
         const $card = $('<div>', { class: 'card' }).html(`
             <div class="card-head ${headClass}">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="code-pill">${c.code}</span></div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start">
+                    <span class="code-pill">${c.code}</span>
+                    <span class="code-pill">
+                        <span class="material-symbols-outlined">
+                            location_on
+                        </span>
+                        LV-1822
+                    </span>
+                </div>
                 <h4 style="color:#fff;font-weight:700;margin-top:8px; font-size: 1.2rem">${c.name}</h4>
             </div>
             <div class="card-body">
+                <div styles="display: flex; justify-content: space-between;">
+
+                </div>
                 <div style="margin-bottom:8px; color:#6b7280; display: flex; align-items: center; gap: 8px;">
                     <span class="material-symbols-outlined">
                         calendar_today

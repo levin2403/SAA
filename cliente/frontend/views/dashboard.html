@@ -16,18 +16,35 @@
   <div class="app">
     <main class="main">
       <header class="topbar">
-        <div class="search"><input placeholder="Buscar" /></div>
+        <div class="search-container">
+          <input class="search-input" type="text" placeholder="Buscar por clase" /> 
+          <button class="search-button">
+            <span class="material-symbols-outlined">
+              search
+            </span>
+          </button>
+        </div>
         <div style="display:flex;align-items:center;gap:12px">
           <div class="date" id="todayDate"></div>
-          <button id="nav-reportes-top" class="btn secondary teacher-only" style="display:none;padding:8px 14px;font-size:13px">Reportes</button>
-          <button id="logoutBtn-top" class="btn danger" style="padding:8px 14px;font-size:13px">Cerrar Sesión</button>
+          <button id="nav-reportes-top" class="btn secondary teacher-only" style="display:none; align-items: center; gap: 8px; padding:8px 14px; font-size:0.9rem">
+            Reportes
+            <span class="material-symbols-outlined">
+              lab_profile
+            </span>
+          </button>
+          <button id="logoutBtn-top" class="btn danger" style="display: flex; align-items: center; gap: 8px; padding:8px 14px; font-size:0.9rem">
+            Cerrar Sesión
+            <span class="material-symbols-outlined">
+              logout
+            </span>
+          </button>
         </div>
       </header>
 
       <section class="welcome">
         <div class="welcome-left">
           <h1 id="welcomeTitle">Bienvenido</h1>
-          <p id="welcomeMsg">Panel de control - </p>
+          <p id="welcomeMsg">Panel de control</p>
         </div>
         <div class="welcome-right"><div class="illustration"></div></div>
       </section>

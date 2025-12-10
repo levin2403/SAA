@@ -28,7 +28,7 @@ function setInitialScreenInfo() {
   // Colocarla en el input
   $('#attendanceDate').val(localDate);
 
-  $('#attendanceTitle').text(`Toma de lista: ${selectedClass.name} ${selectedClass.code}`);
+  $('#attendanceTitle').text(`${selectedClass.name} · ${selectedClass.code}`);
 
   $('#classScheduleInfo').text(`${selectedClass.days.join(', ')}`);
   
