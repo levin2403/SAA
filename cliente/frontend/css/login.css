@@ -102,3 +102,31 @@ label{
     transform:translateY(-2px);
     box-shadow:0 8px 24px rgba(99,102,241,0.2)
 }
+
+
+.demo-credentials{
+    margin-top: 2rem;
+    background-color: #d7e6ff;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.demo-credentials h3{
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.demo-credentials p{
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+}
+
+#loginPass{
+    font-size: 0.9rem;
+}
+
+#loginId{
+    font-size: 0.9rem;
+}
