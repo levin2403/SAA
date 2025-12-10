@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login — Gestor</title>
+  <link rel="icon" href="../resources/app-icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/login.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -18,11 +19,16 @@
       <p class="muted">Sistema de Control de Asistencias</p>
       <form id="loginForm"> 
         <label for="loginId">ID de Usuario</label>
-        <input id="loginId" type="text" maxlength="11" placeholder="1234567890" />
+        <input id="loginId" type="text" maxlength="11" placeholder="00000250634" />
         <label for="loginPass">Contraseña</label>
         <input id="loginPass" type="password" placeholder="tu contraseña" />
         <div id="loginError" class="login-error" aria-live="polite"></div>
         <button type="submit" class="btn">Iniciar Sesión</button>
+        <div class="demo-credentials">
+          <h3>Demo:</h3> 
+          <p><b>Alumno:</b> 00000240798 / pass123</p>
+          <p><b>Profesor:</b> 00000250545 / pass123</p>
+        </div>
       </form>
     </div>
   </main>
