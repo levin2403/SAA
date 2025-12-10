@@ -2,10 +2,12 @@ const express = require('express');
 const connectDB = require('./src/config/db');
 const userRouter = require('./src/router/user.router');
 const classRouter = require('./src/router/class.router');
-const seedDatabase = require('./src/utils/seeder');
+const seedClasses = require('./src/utils/classesSeeder');
+const seedUsers = require('./src/utils/usersSeeder');
 
 connectDB().then(async () => {
-    await seedDatabase();
+    await seedClasses();
+    await seedUsers();
     
     //app configuration
     const app = express();

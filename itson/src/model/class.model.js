@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const ClassSchema = new mongoose.Schema({
-    code: {type: String, required: true },
+    code: { type: String, required: true },
+    classroom: { type: String, required: true },
     name: { type: String, required: true },
     days: [{ type: String, required: true }],
     hours: { type: String, required: true },

@@ -65,7 +65,7 @@ async function loadClasses(classes){
                         <span class="material-symbols-outlined">
                             location_on
                         </span>
-                        LV-1822
+                        ${c.classroom}
                     </span>
                 </div>
                 <h4 style="color:#fff;font-weight:700;margin-top:8px; font-size: 1.2rem">${c.name}</h4>

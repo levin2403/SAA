@@ -16,30 +16,27 @@ const seedSessions = async () => {
         console.log('Colection cleaned.');
 
         const sessions = [
-            {
-                //_id: oid("671fd9e2a3b12c7f9c1a1001"),
-                userId: "00000247527",
-                tokenVersion: 0,
-                refreshTokens: []
-            },
-            {
-                //_id: oid("671fd9e2a3b12c7f9c1a1002"),
-                userId: "00000240798",
-                tokenVersion: 0,
-                refreshTokens: []
-            },
-            {
-                //_id: oid("671fd9e2a3b12c7f9c1a1003"),
-                userId: "00000240474",
-                tokenVersion: 0,
-                refreshTokens: []
-            },
-            {
-                //_id: oid("671fd9e2a3b12c7f9c1a1004"),
-                userId: "00000250545",
-                tokenVersion: 0,
-                refreshTokens: []
-            }
+            // Students
+            { userId: "00000247527", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240798", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240001", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240002", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240003", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240004", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240005", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240006", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240007", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000240008", tokenVersion: 0, refreshTokens: [] },
+
+            // Professors
+            { userId: "00000240474", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000250545", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000250546", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000250547", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000250548", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000250549", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000250550", tokenVersion: 0, refreshTokens: [] },
+            { userId: "00000250551", tokenVersion: 0, refreshTokens: [] }
         ];
         await sessionModel.insertMany(sessions);
 
