@@ -127,6 +127,20 @@ label{
     font-size: 0.9rem;
 }
 
+#loginPass:focus {
+    outline: none; 
+    border-style: solid;
+    border-width: 2px;
+    border-color: rgb(134, 134, 134);
+}
+
 #loginId{
     font-size: 0.9rem;
+}
+
+#loginId:focus {
+    outline: none; 
+    border-style: solid;
+    border-width: 2px;
+    border-color: rgb(134, 134, 134);
 }

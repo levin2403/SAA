@@ -121,3 +121,22 @@ body{
     grid-template-columns:1fr;
   }
 }
+
+.btn-download{
+  background:linear-gradient(90deg,#1aaf1afb,#33d302);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(99,102,241,0.12);
+  transition:all 0.3s;
+}
+.btn-download:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(99,102,241,0.2);
+}
+
+#filterClass{
+  outline: none;
+}
