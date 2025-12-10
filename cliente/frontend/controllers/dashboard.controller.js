@@ -5,6 +5,7 @@ const api = new UsersService()
 const sessionApi = new SessionService()
 const user = JSON.parse(localStorage.getItem('user'));
 const tokens = JSON.parse(localStorage.getItem('tokens'));
+let lastGeneratedQR;
 
 // initial validation to know if user is loged
 if(!user){ window.location.replace('login.html') }
@@ -99,8 +100,7 @@ async function loadClasses(classes){
 
         $card.find('.action-btn').on('click', async()=>{
         if(user.rol === 'STUDENT'){
-            console.log(c._id, c.code)
-                await generateQr(c._id, c.code)  
+                await generateQr(c._id, c.code, c.name)  
             } 
             else {
                 navigateToAttendance(c)
@@ -110,12 +110,13 @@ async function loadClasses(classes){
     })
 }
 
-async function generateQr(classId, classCode){
+async function generateQr(classId, classCode, className){
 
-    showQRModal(classCode)
+    showQRModal(classCode, className)
 
     //generate the data
     const qrData = generateQRData(user.id, user.name, classId, classCode)
+    lastGeneratedQR = qrData;
 
     // Generar QR como imagen usando API
     const encodedData = encodeURIComponent(qrData)
@@ -125,9 +126,9 @@ async function generateQr(classId, classCode){
     img.alt = 'Código QR'
     document.getElementById('qrBody').appendChild(img)
 
-    function showQRModal(classCode){
+    function showQRModal(classCode, className){
         //show the modal
-        document.getElementById('qrTitle').textContent = `Código QR - ${classCode}`
+        document.getElementById('qrTitle').textContent = `${classCode} - ${className}`
         document.getElementById('qrBody').innerHTML = ''
         document.getElementById('qrModal').classList.remove('hidden')
     }
@@ -171,6 +172,50 @@ async function handleLogout() {
         showNotification(error.message, 'error')
     }
 }
+
+async function handleSendQR() {
+    const email = $('#email-input').val();
+    
+    if (!email) {
+        showNotification('Ingresa un correo antes de enviarlo', 'error');
+        return;
+    }
+
+    try{
+        
+    }
+    catch(error){
+        showNotification(error.message, 'error');
+    }
+}
+
+
+
+$('#send-email').on('click', async ()=> {
+    await handleSendQR();
+});
+
+
+/**
+ * Displays a toast notification to the user.
+ * Creates a notification element, adds it to the DOM, and automatically removes it after 3 seconds.
+ * @param {string} message - The notification message to display
+ * @param {string} type - The type of notification ('success', 'error', etc.) used for styling
+ */
+function showNotification(message, type){
+    const toast = document.createElement('div')
+    toast.className = `notification-toast ${type}`
+    toast.textContent = message
+    document.body.appendChild(toast)
+        
+    toast.offsetHeight // Trigger reflow for animation
+    toast.classList.add('show')
+        
+    setTimeout(()=>{
+    toast.classList.remove('show')
+      setTimeout(()=> toast.remove(), 300)
+    }, 3000)
+  }
 
 // ========= MODALS SECTION ==============
 

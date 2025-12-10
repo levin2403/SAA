@@ -48,6 +48,22 @@ export default class UsersService {
       throw new Error(errorMessage || 'Error al obtener las clases');
     }
   }
+  
+
+  async getProfessorClasses(email, qrPayload) 
+  {
+    try{
+      const response = await this.api.post('/class/qr/', 
+        {
+          email: email,
+          qr_payload: qrPayload
+        })
+      return response.data.classes
+    }catch(error){
+      const errorMessage = error.response?.data;
+      throw new Error(errorMessage || 'Error al enviar el correo');
+    }
+  }
 }
 
 

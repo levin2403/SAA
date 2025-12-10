@@ -8,6 +8,7 @@
   <meta http-equiv="Expires" content="0" />
   <title>Dashboard</title>
   <link rel="icon" href="../resources/app-logo.png">
+  <link rel="stylesheet" href="../commons/toast.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link rel="stylesheet" href="../css/dashboard.css" />
@@ -65,15 +66,18 @@
       </section>
     </main>
 
-    <div id="qrModal" class="modal hidden" role="dialog" aria-modal="true", closedBy="any">
+    <div id="qrModal" class="modal hidden" role="dialog" aria-modal="true" closedBy="any">
       <div class="modal-content">
         <h3 id="qrTitle">Código QR</h3>
         <div id="qrBody" class="qr-body"></div>
-        <button id="closeQr" class="btn">Cerrar</button>
+        <div class="send-mail-form">
+          <input type="text" placeholder="Introduce tu correo para obtener tu código" class="mail-input" id="email-input"></input>
+          <button id="send-email" class="btn-send-mail">Eviar codigo QR</button>
+        </div>
       </div>
     </div>
 
-    <div id="logoutConfirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true", closedBy="any">
+    <div id="logoutConfirmModal" class="confirm-modal hidden" role="dialog" aria-modal="true" closedBy="any">
       <div class="confirm-modal-content">
         <h3>Cerrar sesión</h3>
         <p>¿Estás seguro de que deseas cerrar la sesión?</p>
