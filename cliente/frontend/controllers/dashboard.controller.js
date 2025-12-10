@@ -52,11 +52,12 @@ async function loadClasses(classes){
     
     const $container = $('#cardsContainer')
     const gradientClasses = ['gradient-blue','gradient-purple','gradient-pink']
+    const pickGradient = () => gradientClasses[Math.floor(Math.random() * gradientClasses.length)]
 
-    classes.forEach((c, idx)=>{
+    classes.forEach((c)=>{
         const finalDays = c.days.join(', ');
     
-        const headClass = gradientClasses[idx % gradientClasses.length]
+        const headClass = pickGradient()
         const $card = $('<div>', { class: 'card' }).html(`
             <div class="card-head ${headClass}">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start">

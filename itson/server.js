@@ -6,8 +6,8 @@ const seedClasses = require('./src/utils/classesSeeder');
 const seedUsers = require('./src/utils/usersSeeder');
 
 connectDB().then(async () => {
-    await seedClasses();
     await seedUsers();
+    await seedClasses();
     
     //app configuration
     const app = express();

@@ -33,6 +33,9 @@ function setInitialScreenInfo() {
   $('#classScheduleInfo').text(`${selectedClass.days.join(', ')}`);
   
   $('#hours-info').text(`${selectedClass.hours}`);
+
+  $('#classroom-info').text(`${selectedClass.classroom}`);
+  
 }
 
 /**
